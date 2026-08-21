@@ -95,5 +95,5 @@ print(annual_data)
 
 tibble::as_tibble(annual_data)
 
-readr::write_csv(annual_data, "csv/timor_annual_macro")
+readr::write_csv(annual_data, "csv/timor_annual_macro.csv")
 
