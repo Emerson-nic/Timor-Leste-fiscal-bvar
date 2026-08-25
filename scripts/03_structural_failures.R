@@ -9,9 +9,10 @@ pacman::p_load(tidyverse,
 
 # import data if it doesn't exist in the environment
 
-if (!exists("quarterly_log")) {
-  if (file.exists("csv/timor_quarterly_log.csv")) {
+if (!exists("quarterly_log") & !exists("quarterly")) {
+  if (file.exists("csv/timor_quarterly_log.csv") & file.exists("csv/timor_quarterly_data.csv")) {
     quarterly_log <- readr::read_csv("csv/timor_quarterly_log.csv")
+    quarterly <- readr::read_csv("csv/timor_quarterly_data.csv")
   } else {
     source("scripts/02_dessagregation.R")
   }
@@ -86,6 +87,21 @@ print(dummys)
 print(dummys, n = 78)
 
 readr::write_csv(dummys, "csv/timor_quaiterly_log_and_dummys.csv")
+
+#add dummys to timor_quaiterly
+quarterly <- quarterly %>%
+  dplyr::left_join(
+    dplyr::select(dummys, 
+                  date, 
+                  shock_2006, 
+                  shock_2009, 
+                  shock_2012, 
+                  shock_2016, 
+                  shock_covid),
+    by = "date"
+  )
+
+readr::write_csv(quarterly, "csv/timor_quaiterly_and_dummys.csv")
 
 if(F){
   "
