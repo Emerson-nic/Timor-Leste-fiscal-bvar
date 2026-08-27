@@ -1,17 +1,26 @@
+if(F){
+  "
+  
+  the series has few data point (88) and has been interpolated i don't trust
+  the result, so be careful with estimates
+  
+  "
+}
+
 #load library ---- 
 options(repos = c(CRAN = "https://cloud.r-project.org"))
 if (!require("pacman")) install.packages("pacman")
 
 pacman::p_load(tidyverse,
-               dplyr,
-               BVAR
+               BVAR,
+               coda #for the Geweke convergence test of mcmc
 )
 
 # import data if it doesn't exist in the environment
 
 if (!exists("quarterly_log_dummy")) {
-  if (file.exists("csv/timor_quaiterly_log_and_dummys.csv")) {
-    quarterly_log_dummy <- readr::read_csv("csv/timor_quaiterly_log_and_dummys.csv")
+  if (file.exists("csv/mod_tmp_3_quaiterly_log_and_dummys.csv")) {
+    quarterly_log_dummy <- readr::read_csv("csv/mod_tmp_3_quaiterly_log_and_dummys.csv")
   } else {
     source("scripts/02_dessagregation.R")
   }
@@ -128,23 +137,20 @@ for (lam in lambda_grid) {
 
 print(table_lambda_sensitivity)
 
-#it doesn't make sence, the winner is 5, i don't trust so this is waekness ;(
+#it doesn't make sence, the winner is 1.4, i don't trust so this is waekness ;(
 
 # lambda_mode Log_Marginal_Likelihood
-# 1          0.1                 1123.72
-# 2          0.2                 1122.87
-# 3          0.3                 1122.02
-# 4          0.4                 1121.19
-# 5          0.5                 1120.42
-# 6          0.6                 1119.71
-# 7          0.7                 1119.09
-# 8          0.8                 1118.55
-# 9          0.9                 1118.14
-# 10         1.0                 1117.83
-# 11         2.0                 1120.13
-# 12         3.0                 1128.08
-# 13         4.0                 1136.81
-# 14         5.0                 1144.12 whyyy????????
+# 1          0.1                 1073.00
+# 2          0.2                 1073.00
+# 3          0.3                 1073.00
+# 4          0.4                 1073.00
+# 5          0.5                 1073.00
+# 6          0.6                 1073.00
+# 7          0.7                 1073.00
+# 8          0.8                 1073.00
+# 9          0.9                 1073.00
+# 10         1.0                 1073.00
+# 11         1.4                 1073.01whyyy????????
 
 
 #prior 3 lag sensitivity ----
@@ -216,4 +222,101 @@ print(table_lags_bvar_2)
 # 11    11                   1008.92
 # 12    12                    990.76
 
+#final hiperparameters ----
 
+priors_spec_3 <- BVAR::bv_priors(
+  hyper = "lambda",
+  mn = BVAR::bv_minnesota(
+    # Literature standard for small economies with interpolated quarterly data
+    #Giannone, D., Lenza, M., & Primiceri, G. E. (2015), "Prior selection..."
+    # Fixing lambda around 0.2 avoids overfitting the smoothness of Denton-Cholette
+    lambda = BVAR::bv_lambda(mode = 0.2,
+                             min = 0.001, 
+                             max = 10),
+    
+    alpha = BVAR::bv_alpha(mode = 2, 
+                           min = 1, 
+                           max = 3),
+    
+    psi = BVAR::bv_psi(
+      mode = sqrt(var_base),
+      min = sqrt(var_base) / 1000,  
+      max = sqrt(var_base) * 1000
+    )
+  )
+)
+
+mod_tmp_3 <- BVAR::bvar(
+  data = endogenous,
+  lags = 2,
+  exogen = exogenous,
+  priors = priors_spec_3,
+  n_draw = 10000,
+  n_burn = 1000,
+  verbose = TRUE
+)
+
+summary(mod_tmp_3)
+# if Error en 1:k: argument of length 0 
+#just type ctrl + shift + f10 
+plot(mod_tmp_3)
+print(vcov(mod_tmp_3), digits = 6)
+
+#mcmc convergence test (GEWEKE & ESS) ----
+
+# Assessing convergence across Hyperparameters, Coefficients (beta), and Covariance (sigma)
+hypers_mcmc <- coda::as.mcmc(mod_tmp_3$hyper) 
+geweke_test <- coda::geweke.diag(hypers_mcmc)
+geweke_p_values <- 2 * stats::pnorm(-abs(geweke_test$z))
+ess_hypers <- coda::effectiveSize(hypers_mcmc)
+
+geweke_table <- data.frame(
+  Hyperparameter = names(geweke_p_values),
+  P_Value_Geweke = round(geweke_p_values, 4),
+  ESS_Sample_Size = round(ess_hypers, 1),
+  Pass_Convergence = geweke_p_values > 0.05
+)
+
+print(geweke_table)
+
+#mcmc convergence, all 
+beta_mat <- matrix(mod_tmp_3$beta, nrow = dim(mod_tmp_3$beta)[1])
+beta_mcmc <- coda::as.mcmc(beta_mat)
+ess_beta <- coda::effectiveSize(beta_mcmc)
+geweke_beta <- coda::geweke.diag(beta_mcmc)
+geweke_p_beta <- 2 * stats::pnorm(-abs(geweke_beta$z))
+
+beta_table <- data.frame(
+  Parameter = paste0("beta_", 1:ncol(beta_mat)),
+  Geweke_P_Value = round(geweke_p_beta, 4),
+  Eff_Sample_Size = round(ess_beta, 1),
+  Pass_Convergence = geweke_p_beta > 0.05
+)
+print(beta_table)
+
+#mcmc convergence variance covariance (sigma)
+beta_mat <- matrix(mod_tmp_3$beta, nrow = dim(mod_tmp_3$beta)[1])
+beta_mcmc <- coda::as.mcmc(beta_mat)
+ess_beta <- coda::effectiveSize(beta_mcmc)
+geweke_beta <- coda::geweke.diag(beta_mcmc)
+geweke_p_beta <- 2 * stats::pnorm(-abs(geweke_beta$z))
+
+beta_table <- data.frame(
+  Parameter = paste0("beta_", 1:ncol(beta_mat)),
+  Geweke_P_Value = round(geweke_p_beta, 4),
+  Eff_Sample_Size = round(ess_beta, 1),
+  Pass_Convergence = geweke_p_beta > 0.05
+)
+print(beta_table)
+
+
+#BVAR stability 
+comp_mat <- BVAR::companion(mod_tmp_3)
+eigen_vals <- eigen(comp_mat)$values
+max_modulus <- max(Mod(eigen_vals))
+
+stability_df <- data.frame(
+  Max_Eigenvalue_Modulus = round(max_modulus, 4),
+  Is_Stable = max_modulus < 1
+)
+print(stability_df)

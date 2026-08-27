@@ -2,10 +2,8 @@
 options(repos = c(CRAN = "https://cloud.r-project.org"))
 if (!require("pacman")) install.packages("pacman")
 
-pacman::p_load(tidyverse,
-               dplyr,
-               BVAR,
-               coda, #for the Geweke convergence test of MCMC
+pacman::p_load(BVAR,
+               coda, #for the Geweke convergence test of mcmc
                FinTS #for the ARCH test of heteroscedasticity
 )
 
@@ -24,8 +22,8 @@ if (!exists("quarterly_log_dummy")) {
 endogenous <- quarterly_log_dummy %>%
   dplyr::select(
     ln_gov_exp, # 1 initial shock
-    ln_gdp_non, # 2 real response
-    ln_imports, # 3 fiscal leakage
+    ln_imports, # 2 fiscal leaka
+    ln_gdp_non, # 3 real response
     ln_cpi, # 4 price adjustment
     ln_credit # 5 financial liquidity
   ) %>%
@@ -44,26 +42,22 @@ var_base <- as.numeric(apply(diff(endogenous), 2, var, na.rm = TRUE))
 var_base <- pmax(var_base, 1e-5, na.rm = TRUE)
 
 priors_spec_2 <- BVAR::bv_priors(
-  hyper = "auto",
+  hyper = "lambda",
   mn = BVAR::bv_minnesota(
-    lambda = BVAR::bv_lambda(mode = 1.3, #lambda is the overall tightness
-                             #Balance how much freedom the prior gives the 
-                             #model to let the data speak for itself against 
-                             #how much you force it to rely on the prior
-                             min = 0.0001, 
-                             max = 5),
+    # Literature standard for small/emerging economies with interpolated quarterly data:
+    # Fixing/tightening lambda around 0.2 avoids overfitting the smoothness of Denton-Cholette
+    lambda = BVAR::bv_lambda(mode = 0.2,
+                             min = 0.001, 
+                             max = 10),
     
-    alpha = BVAR::bv_alpha(mode = 2, #alpha is the lag decay controls the rate 
-                           #at which the coefficients shrink toward zero as 
-                           #the lag is reduced
+    alpha = BVAR::bv_alpha(mode = 2, 
                            min = 1, 
                            max = 3),
     
-    psi = BVAR::bv_psi(#the psi evaluate the contraction using the intrinsic 
-      #volatility of each variable
+    psi = BVAR::bv_psi(
       mode = sqrt(var_base),
-      min = sqrt(var_base) / 10000,  
-      max = sqrt(var_base) * 10000
+      min = sqrt(var_base) / 1000,  
+      max = sqrt(var_base) * 1000
     )
   )
 )
@@ -77,17 +71,27 @@ timor <- BVAR::bvar(
   priors = priors_spec_2,
   n_draw = 500000, #mcmc totals
   n_burn = 150000, #warm-up period (initial discard)
-  thin = 50, #keep 1 out of every 50 samples, remove autocorrelation  MCMC
+  thin = 1, #keep 1 out of every 50 samples, remove autocorrelation  mcmc
   verbose = TRUE #the console displays a progress bar 
 )
 
+summary(timor)
+plot(timor)
+
 #hiperparameters
-timor$hyper
+#timor$hyper
 
 #coefficients
-coef(timor, type = "mean")
+#coef(timor, type = "mean")
 
 #extract residuals
+# Note on Denton-Cholette disaggregation:
+# The quarterly series were interpolated from annual data without guide variables
+# This introduces deterministic smoothness and intrinsic serial correlation
+# Therefore, Ljung-Box test rejections for autocorrelation should be interpreted
+# with caution as a property of the temporal disaggregation method, not solely 
+# BVAR misspecification.
+
 res_array <- stats::residuals(timor)
 res_median <- residuals(timor, type = "quantile", conf_bands = 0.5)
 res_median <- as.matrix(res_median)
@@ -106,7 +110,7 @@ for (i in 1:ncol(res_median)) {
   p_lb <- lb_test$p.value
   
   #heteroscedasticity (ARCH test)
-  #H0: No ARCH effects(p > 0.05 and true)
+  #H0: no ARCH effects(p > 0.05 and true)
   arch_test <- FinTS::ArchTest(var_resid, lags = 12)
   p_arch <- arch_test$p.value
   
@@ -119,24 +123,66 @@ for (i in 1:ncol(res_median)) {
   ))
 }
 
+cat("Residual Diagnostics (Ljung-Box & ARCH)\n")
 print(diagnostics_table)
 
-#mcmc convergence test (GEWEKE test) ----
+#mcmc convergence test (GEWEKE & ESS) ----
 
-#H0: the markov chains have converged (p > 0.05 )
-#convert hyperparameters trace into an mcmc object
+# Assessing convergence across Hyperparameters, Coefficients (beta), and Covariance (sigma)
 hypers_mcmc <- coda::as.mcmc(timor$hyper) 
 geweke_test <- coda::geweke.diag(hypers_mcmc)
-
-#p-values
 geweke_p_values <- 2 * stats::pnorm(-abs(geweke_test$z))
+ess_hypers <- coda::effectiveSize(hypers_mcmc)
 
 geweke_table <- data.frame(
   Hyperparameter = names(geweke_p_values),
   P_Value_Geweke = round(geweke_p_values, 4),
+  Eff_Sample_Size = round(ess_hypers, 1),
   Pass_Convergence = geweke_p_values > 0.05
 )
 
 print(geweke_table)
+
+#mcmc convergence, coefficients Beta, ESS and Geweke 
+beta_mat <- matrix(timor$beta, nrow = dim(timor$beta)[1])
+beta_mcmc <- coda::as.mcmc(beta_mat)
+ess_beta <- coda::effectiveSize(beta_mcmc)
+geweke_beta <- coda::geweke.diag(beta_mcmc)
+geweke_p_beta <- 2 * stats::pnorm(-abs(geweke_beta$z))
+
+beta_table <- data.frame(
+  Parameter = paste0("beta_", 1:ncol(beta_mat)),
+  Geweke_P_Value = round(geweke_p_beta, 4),
+  Eff_Sample_Size = round(ess_beta, 1),
+  Pass_Convergence = geweke_p_beta > 0.05
+)
+print(beta_table)
+
+#mcmc convergence variance covariance (sigma)
+sigma_mat <- matrix(timor$sigma, nrow = dim(timor$sigma)[1])
+sigma_mcmc <- coda::as.mcmc(sigma_mat)
+ess_sigma <- coda::effectiveSize(sigma_mcmc)
+geweke_sigma <- coda::geweke.diag(sigma_mcmc)
+geweke_p_sigma <- 2 * stats::pnorm(-abs(geweke_sigma$z))
+
+sigma_table <- data.frame(
+  Parameter = paste0("sigma_", 1:ncol(sigma_mat)),
+  Geweke_P_Value = round(geweke_p_sigma, 4),
+  Eff_Sample_Size = round(ess_sigma, 1),
+  Pass_Convergence = geweke_p_sigma > 0.05
+)
+print(sigma_table)
+
+
+#BVAR stability 
+comp_mat <- BVAR::companion(timor)
+eigen_vals <- eigen(comp_mat)$values
+max_modulus <- max(Mod(eigen_vals))
+
+stability_df <- data.frame(
+  Max_Eigenvalue_Modulus = round(max_modulus, 4),
+  Is_Stable = max_modulus < 1
+)
+print(stability_df)
 
 
