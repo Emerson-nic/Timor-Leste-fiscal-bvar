@@ -18,9 +18,12 @@ pacman::p_load(tidyverse,
 
 # import data if it doesn't exist in the environment
 
+#restartR in case of an error
+#.rs.restartR() 
+
 if (!exists("quarterly_log_dummy")) {
-  if (file.exists("csv/mod_tmp_3_quaiterly_log_and_dummys.csv")) {
-    quarterly_log_dummy <- readr::read_csv("csv/mod_tmp_3_quaiterly_log_and_dummys.csv")
+  if (file.exists("csv/timor_quaiterly_log_and_dummys.csv")) {
+    quarterly_log_dummy <- readr::read_csv("csv/timor_quaiterly_log_and_dummys.csv")
   } else {
     source("scripts/02_dessagregation.R")
   }
@@ -246,12 +249,13 @@ priors_spec_3 <- BVAR::bv_priors(
   )
 )
 
+set.seed(54973997)
 mod_tmp_3 <- BVAR::bvar(
   data = endogenous,
   lags = 2,
   exogen = exogenous,
   priors = priors_spec_3,
-  n_draw = 10000,
+  n_draw = 15000,
   n_burn = 1000,
   verbose = TRUE
 )
@@ -320,3 +324,4 @@ stability_df <- data.frame(
   Is_Stable = max_modulus < 1
 )
 print(stability_df)
+

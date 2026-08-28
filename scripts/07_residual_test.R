@@ -3,11 +3,15 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
 if (!require("pacman")) install.packages("pacman")
 
 pacman::p_load(BVAR,
+               dplyr,
                coda, #for the Geweke convergence test of mcmc
                FinTS #for the ARCH test of heteroscedasticity
 )
 
 # import data if it doesn't exist in the environment
+
+#restartR in case of an error
+#.rs.restartR()
 
 if (!exists("quarterly_log_dummy")) {
   if (file.exists("csv/timor_quaiterly_log_and_dummys.csv")) {
@@ -27,6 +31,7 @@ endogenous <- quarterly_log_dummy %>%
     ln_cpi, # 4 price adjustment
     ln_credit # 5 financial liquidity
   ) %>%
+  stats::na.omit() %>%
   as.matrix()
 
 exogenous <- quarterly_log_dummy %>%
@@ -42,40 +47,45 @@ var_base <- as.numeric(apply(diff(endogenous), 2, var, na.rm = TRUE))
 var_base <- pmax(var_base, 1e-5, na.rm = TRUE)
 
 priors_spec_2 <- BVAR::bv_priors(
-  hyper = "lambda",
+  hyper = "auto",
   mn = BVAR::bv_minnesota(
     # Literature standard for small/emerging economies with interpolated quarterly data:
     # Fixing/tightening lambda around 0.2 avoids overfitting the smoothness of Denton-Cholette
     lambda = BVAR::bv_lambda(mode = 0.2,
-                             min = 0.001, 
-                             max = 10),
+                             min = 0.0001, 
+                             max = 5),
     
     alpha = BVAR::bv_alpha(mode = 2, 
                            min = 1, 
-                           max = 3),
+                           max = 5),
     
     psi = BVAR::bv_psi(
       mode = sqrt(var_base),
-      min = sqrt(var_base) / 1000,  
-      max = sqrt(var_base) * 1000
+      min = sqrt(var_base) / 100,  
+      max = sqrt(var_base) * 100
     )
   )
 )
 
+
 # bvar with p=2 ----
 
+set.seed(54973997)
 timor <- BVAR::bvar(
   data = endogenous,
   lags = 2,
   exogen = exogenous,
   priors = priors_spec_2,
-  n_draw = 500000, #mcmc totals
-  n_burn = 150000, #warm-up period (initial discard)
-  thin = 1, #keep 1 out of every 50 samples, remove autocorrelation  mcmc
+  n_draw = 50000, #mcmc totals
+  n_burn = 1000, #warm-up period (initial discard)
+  thin = 5, #keep 1 out of every 5 samples, remove autocorrelation  mcmc
+  #thin kills the geweke test ;(
   verbose = TRUE #the console displays a progress bar 
 )
 
 summary(timor)
+#if Error en 1:k: argument of length 0 
+#just type ctrl + shift + f10 
 plot(timor)
 
 #hiperparameters
