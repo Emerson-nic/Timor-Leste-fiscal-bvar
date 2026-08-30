@@ -149,3 +149,5 @@ tibble::as_tibble(quarterly_log)
 #export to csv
 readr::write_csv(quarterly_data, "csv/timor_quarterly_data.csv")
 readr::write_csv(quarterly_log,  "csv/timor_quarterly_log.csv")
+
+rm(list = ls())
