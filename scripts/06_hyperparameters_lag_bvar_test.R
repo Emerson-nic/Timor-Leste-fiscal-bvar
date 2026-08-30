@@ -19,8 +19,8 @@ pacman::p_load(tidyverse,
 # import data if it doesn't exist in the environment
 
 if (!exists("quarterly_log_dummy")) {
-  if (file.exists("csv/mod_tmp_3_quaiterly_log_and_dummys.csv")) {
-    quarterly_log_dummy <- readr::read_csv("csv/mod_tmp_3_quaiterly_log_and_dummys.csv")
+  if (file.exists("csv/timor_quaiterly_log_and_dummys.csv")) {
+    quarterly_log_dummy <- readr::read_csv("csv/timor_quaiterly_log_and_dummys.csv")
   } else {
     source("scripts/02_dessagregation.R")
   }
@@ -49,9 +49,10 @@ priors_spec <- BVAR::bv_priors(
   mn = BVAR::bv_minnesota(
     lambda = BVAR::bv_lambda(mode = 0.2, min = 0.0001, max = 1.5),
     alpha = BVAR::bv_alpha(mode = 2, min = 1, max = 3),
+    # psi = BVAR::bv_psi() 
     psi = BVAR::bv_psi(
       mode = sqrt(var_base),
-      min = sqrt(var_base) / 100,  
+      min = sqrt(var_base) / 100,
       max = sqrt(var_base) * 100
     )
     )
@@ -86,21 +87,20 @@ print(table_lags_bvar)
 
 #results
 # lag_p Log_Marginal_Likelihood
-# 1      1                  949.59
-# 2      2                 1122.87 winner
-# 3      3                 1097.40
-# 4      4                 1067.32
-# 5      5                 1064.50
-# 6      6                 1065.60
-# 7      7                 1062.01
-# 8      8                 1048.09
-# 9      9                 1025.80
-# 10    10                 1005.00
-# 11    11                  989.75
-# 12    12                  965.02
+# 1      1                  950.98
+# 2      2                 1073.00
+# 3      3                 1079.32 winner
+# 4      4                 1072.07
+# 5      5                 1076.60
+# 6      6                 1071.05
+# 7      7                 1060.43
+# 8      8                 1041.40
+# 9      9                 1021.53
+# 10    10                  999.05
+# 11    11                  989.87
+# 12    12                  964.77
 
 #prior 2 lambda sensitivity----
-
 
 lambda_grid <- c(0.1 ,0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.4)
 table_lambda_sensitivity <- data.frame()
@@ -121,7 +121,7 @@ for (lam in lambda_grid) {
   set.seed(54973997)
   mod_tmp <- BVAR::bvar(
     data = endogenous, 
-    lags = 2, 
+    lags = 3, 
     exogen = exogenous,
     priors = priors_tmp,
     n_draw = 10000,
@@ -163,7 +163,7 @@ priors_spec_2 <- BVAR::bv_priors(
                              #model to let the data speak for itself against 
                              #how much you force it to rely on the prior
                              min = 0.0001, 
-                             max = 5),
+                             max = 3),
     
     alpha = BVAR::bv_alpha(mode = 2, #alpha is the lag decay controls the rate 
                            #at which the coefficients shrink toward zero as 
@@ -174,8 +174,8 @@ priors_spec_2 <- BVAR::bv_priors(
     psi = BVAR::bv_psi(#the psi evaluate the contraction using the intrinsic 
       #volatility of each variable
       mode = sqrt(var_base),
-      min = sqrt(var_base) / 10000,  
-      max = sqrt(var_base) * 10000
+      min = sqrt(var_base) / 100,  
+      max = sqrt(var_base) * 100
     )
   )
 )
@@ -208,7 +208,7 @@ for (p_i in 1:12) {
 print(table_lags_bvar_2)
 
 #resuls
-#lag_p Log_Marginal_Likelihood_2
+# lag_p Log_Marginal_Likelihood_2
 # 1      1                    959.85
 # 2      2                   1117.54 winner
 # 3      3                   1097.57
@@ -232,7 +232,7 @@ priors_spec_3 <- BVAR::bv_priors(
     # Fixing lambda around 0.2 avoids overfitting the smoothness of Denton-Cholette
     lambda = BVAR::bv_lambda(mode = 0.2,
                              min = 0.001, 
-                             max = 10),
+                             max = 3),
     
     alpha = BVAR::bv_alpha(mode = 2, 
                            min = 1, 
@@ -240,12 +240,13 @@ priors_spec_3 <- BVAR::bv_priors(
     
     psi = BVAR::bv_psi(
       mode = sqrt(var_base),
-      min = sqrt(var_base) / 1000,  
-      max = sqrt(var_base) * 1000
+      min = sqrt(var_base) / 100,  
+      max = sqrt(var_base) * 100
     )
   )
 )
 
+set.seed(54973997)
 mod_tmp_3 <- BVAR::bvar(
   data = endogenous,
   lags = 2,
@@ -320,3 +321,6 @@ stability_df <- data.frame(
   Is_Stable = max_modulus < 1
 )
 print(stability_df)
+
+
+rm(list = ls())
