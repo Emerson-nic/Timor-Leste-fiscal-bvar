@@ -18,7 +18,7 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(readxl,
                tidyverse,
                janitor,
-               dplyr,
+               dplyr
 )
 
 data_timor <- readxl::read_excel("dataset/tim-key-indicators-2025.xlsx", 
@@ -97,3 +97,91 @@ tibble::as_tibble(annual_data)
 
 readr::write_csv(annual_data, "csv/timor_annual_macro.csv")
 
+
+# imports ----
+
+imports_raw <- readr::read_csv("dataset/timor-leste-imports-exports-to-timor-leste-by-product_all.csv") 
+
+print(imports_raw)
+
+#transpose
+imports <- t(imports_raw)
+
+#the t() funcion converts it to a matrix, convert it to a dataframe
+imports <- as.data.frame(imports)
+
+#row without header
+imports <- imports %>%
+  tibble::rownames_to_column(var = "na")
+
+#header
+imports <- imports %>%
+  janitor::row_to_names(row_number = 6)
+
+#rename the first row year
+colnames(imports)[1] <- "year"
+
+#cleanig the names 
+colnames(imports) <- janitor::make_clean_names(colnames(imports))
+
+tibble::as_tibble(imports)
+
+print(imports$year)
+
+imports %>%
+  dplyr::select(year) %>%
+  print()
+
+#date claning
+
+imports <- imports %>%
+  dplyr::mutate(
+    #extract only the first 6 characters (200201)
+    year_raw = substr(year, 1, 6),
+    
+    #separate the year (first 4 digits) and the quarter (last 2 digits)
+    yyyy = substr(year_raw, 1, 4),
+    qq = substr(year_raw, 5, 6),
+  ) %>% 
+  dplyr::mutate(
+    #assign the starting month for each quarter
+    month = dplyr::case_when(
+      qq == "01" ~ "01", #quarter 1 begins in january
+      qq == "02" ~ "04", #quarter 2 begins in april
+      qq == "03" ~ "07", #quarter 3 begins in july
+      qq == "04" ~ "10"  #quarter 4 begins in october
+    ),
+    day = "-01",
+    year = as.Date(paste0(yyyy, "-", month, day))
+  )
+
+imports %>% 
+  dplyr::select(year) %>% 
+  print()
+
+colnames(imports)[1] <- "date"
+colnames(imports)[2] <- "imports"
+
+#imports in millons of dollars
+imports <- imports %>%
+  dplyr::mutate(
+    imports = as.numeric(imports) * 1000,
+    imports = as.numeric(imports) / 1000000
+  )
+
+imports <- imports %>%
+  dplyr::select(date, imports) %>%
+  tibble::as_tibble() %>%
+  print(n = 88)
+
+#outlier at 2010-10-01 
+#628 is too high, it migth be a typing error
+
+imports$imports[36] <- imports$imports[36] / 10
+
+imports %>%
+  dplyr::select(date, imports) %>%
+  tibble::as_tibble() %>%
+  print(n = 88)
+
+readr::write_csv(imports, "csv/imports_cleaning_timor_leste.csv")
