@@ -2,7 +2,8 @@
 options(repos = c(CRAN = "https://cloud.r-project.org"))
 if (!require("pacman")) install.packages("pacman")
 
-pacman::p_load(BVAR,
+pacman::p_load(tidyverse,
+               BVAR,
                coda, #for the Geweke convergence test of mcmc
                FinTS #for the ARCH test of heteroscedasticity
 )
@@ -42,13 +43,13 @@ var_base <- as.numeric(apply(diff(endogenous), 2, var, na.rm = TRUE))
 var_base <- pmax(var_base, 1e-5, na.rm = TRUE)
 
 priors_spec_2 <- BVAR::bv_priors(
-  hyper = "lambda",
+  hyper = "auto",
   mn = BVAR::bv_minnesota(
     # Literature standard for small/emerging economies with interpolated quarterly data:
     # Fixing/tightening lambda around 0.2 avoids overfitting the smoothness of Denton-Cholette
     lambda = BVAR::bv_lambda(mode = 0.2,
                              min = 0.001, 
-                             max = 10),
+                             max = 3),
     
     alpha = BVAR::bv_alpha(mode = 2, 
                            min = 1, 
@@ -56,22 +57,23 @@ priors_spec_2 <- BVAR::bv_priors(
     
     psi = BVAR::bv_psi(
       mode = sqrt(var_base),
-      min = sqrt(var_base) / 1000,  
-      max = sqrt(var_base) * 1000
+      min = sqrt(var_base) / 100,  
+      max = sqrt(var_base) * 100
     )
   )
 )
 
 # bvar with p=2 ----
 
+set.seed(54973997)
 timor <- BVAR::bvar(
   data = endogenous,
   lags = 2,
   exogen = exogenous,
   priors = priors_spec_2,
-  n_draw = 500000, #mcmc totals
-  n_burn = 150000, #warm-up period (initial discard)
-  thin = 1, #keep 1 out of every 50 samples, remove autocorrelation  mcmc
+  n_draw = 300000, #mcmc totals
+  n_burn = 10000, #warm-up period (initial discard)
+  thin = 5, #keep 1 out of every 5 samples, remove autocorrelation  mcmc
   verbose = TRUE #the console displays a progress bar 
 )
 
@@ -185,4 +187,68 @@ stability_df <- data.frame(
 )
 print(stability_df)
 
+# irf ----
 
+# ident = TRUE applies cholesky orthogonalization based on variable order
+irf_timor <- BVAR::irf(
+  timor,
+  horizon = 20, 
+  ident = TRUE, 
+  fevd = TRUE, #also computes forecast error variance decomposition
+  conf_bands = c(0.10, 0.16, 0.84, 0.90) # Computes 68% (0.16-0.84) 
+  #and 80% (0.10-0.90) intervals
+)
+
+plot(irf_timor, 
+     vars_impulse = "ln_gov_exp", 
+     vars_response = c("ln_imports", "ln_gdp_non", "ln_cpi", "ln_credit"))
+
+plot(irf_timor)
+
+# order cholesky 1 ----
+
+#order 1
+endogenous_order_1 <- quarterly_log_dummy %>%
+  dplyr::select(
+    ln_gov_exp, # 1 initial shock
+    ln_imports, # 2 fiscal leaka
+    ln_gdp_non, # 3 real response
+    ln_cpi, # 4 price adjustment
+    ln_credit # 5 financial liquidity
+  ) %>%
+  as.matrix()
+
+# professional names 
+prof_names <- c("Gov Expenditure", "Imports", "Non-Oil GDP", "CPI", "Credit")
+colnames(endogenous_order_1) <- prof_names
+
+timor_order_1 <- BVAR::bvar(
+  data = endogenous_order_1,
+  lags = 2,
+  exogen = exogenous,
+  priors = priors_spec_2,
+  n_draw = 300000, 
+  n_burn = 10000, 
+  verbose = TRUE 
+)
+
+#irf
+opt_irf_order_1 <- BVAR::bv_irf(
+  horizon = 20,
+  identification = TRUE, # order cholesky
+  fevd = TRUE # calculated fevd 
+)
+
+irf_timor_order_1 <- BVAR::irf(timor_order_1, 
+                       opt_irf, 
+                       conf_bands = c(0.10, 0.16, 0.84, 0.90))
+
+pdf("graphics/irf_full_matrix_order_1.pdf", width = 12, height = 10)
+plot(irf_timor)
+dev.off()
+
+pdf("graphics/irf_gov_shock_order_1.pdf", width = 10, height = 8)
+plot(irf_timor, 
+     vars_impulse = "Gov Expenditure", 
+     vars_response = c("Imports", "Non-Oil GDP", "CPI", "Credit"))
+dev.off()
