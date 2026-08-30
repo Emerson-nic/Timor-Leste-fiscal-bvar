@@ -46,9 +46,9 @@ message("criterion bic will be used")
 
 message("ln_gov_exp - m = 4 with bic = -254.3870 - m = 4   2005(4) 2009(2) 2012(4) 2016(3)")
 
-message("ln_gdp_non - m = 4 with bic = -464.26927 - m = 4   2006(1) 2010(3)         2016(3) 2019(4)")
+message("ln_gdp_non - m = 4 with bic = -395.69580  - m = 4   2006(1) 2010(2)         2016(3) 2019(4)")
 
-message("ln_imports - m = 4 with bic = 194.2238 - m = 4   2005(4) 2009(1) 2012(3)         2020(3)")
+message("ln_imports - m = 4 with bic = -186.2522 - m = 4   2005(4) 2009(1) 2012(3)         2020(3)")
 
 message("ln_cpi - m = 5 with bic = -461.84006 - m = 5   2005(2) 2009(1) 2012(4) 2016(1) 2020(3)")
 
@@ -119,3 +119,5 @@ if(F){
   
   "
 }
+
+rm(list = ls())
