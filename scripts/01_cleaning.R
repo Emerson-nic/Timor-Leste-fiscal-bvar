@@ -185,3 +185,5 @@ imports %>%
   print(n = 88)
 
 readr::write_csv(imports, "csv/imports_cleaning_timor_leste.csv")
+
+rm(list = ls())
