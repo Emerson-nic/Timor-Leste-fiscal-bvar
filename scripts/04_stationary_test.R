@@ -53,5 +53,5 @@ print(za_results)
 message("is_stationary meaning that h0 is rejacted, h1 is accepted ")
 message("za - h0: the series has unit root")
 
-
+rm(list = ls())
 
