@@ -1,2 +1,22 @@
 data sources downloaded from: 
 https://kidb.adb.org/economies/timor-leste
+
+new data imports_real:
+data source from:
+https://www.trademap.org:
+countries/economy groups
+
+Indonesia
+China
+Australia
+singapore
+hong kong, china
+macao, china
+chine taipei (taiwan)
+australia (not found)
+malaysia
+united states of america
+india
+viet nam
+
+
