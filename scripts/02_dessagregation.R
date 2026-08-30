@@ -6,14 +6,17 @@ if (!require("pacman")) install.packages("pacman")
 pacman::p_load(tidyverse,
                tempdisagg,
                zoo,
-               timeseries
+               timeSeries
                )
 
 # import data if it doesn't exist in the environment
 
-if (!exists("annual_data")) {
-  if (file.exists("csv/timor_annual_macro.csv")) {
+if (!exists("annual_data") & 
+    !exists("imports")) {
+  if (file.exists("csv/timor_annual_macro.csv") & 
+      file.exists("csv/imports_cleaning_timor_leste.csv")) {
     annual_data <- readr::read_csv("csv/timor_annual_macro.csv")
+    imports <- readr::read_csv("csv/imports_cleaning_timor_leste.csv")
   } else {
     source("scripts/01_cleaning.R")
   }
@@ -59,7 +62,24 @@ for (v in var_names) {
             frequency = 1))
 }
 
+#interporlate imports ----
+
+imports <- imports %>%
+  dplyr::mutate(
+    imports = zoo::na.approx(imports, rule = 2) # 2 (2002-04-01   0.002) 
+    #extrapolate the first value backward
+  )
+
+head(imports, n = 10)
+
+ts_imports_q <- ts(imports$imports, start = c(2002, 1), frequency = 4)
+
+#end timeseries
+ts_imports_q <- window(ts_imports_q, end = c(2023, 4))
+
+
 #make the time-series in to quarterly ----
+#last year is 2023
 
 #note: ~1 indicates that it has no external quarterly indicators
 #method is the type of smoothing algorithm
@@ -69,16 +89,15 @@ for (v in var_names) {
 #$$\frac{1}{4} \sum_{q=1}^{4} x_{t,q} = X_t^{anual}$$
 
 
+q_gdp_non <- predict(tempdisagg::td(gdp_non_oil_real ~ ts_imports_q, 
+                                    method = "chow-lin-maxlog", 
+                                    conversion = "sum"))
+
+q_imports <- predict(tempdisagg::td(imports_real ~ ts_imports_q, 
+                                    method = "chow-lin-maxlog", 
+                                    conversion = "sum"))
+
 q_gov_exp <- predict(td(gov_expenditure_real ~ 1, to = "quarterly", 
-                        method = "denton-cholette", 
-                        conversion = "sum"))
-
-q_gdp_non <- predict(td(gdp_non_oil_real ~ 1, to = "quarterly", 
-                        method = "denton-cholette", 
-                        conversion = "sum"))
-
-q_imports <- predict(td(imports_real ~ 1, 
-                        to = "quarterly", 
                         method = "denton-cholette", 
                         conversion = "sum"))
 
