@@ -486,6 +486,37 @@ print(stability_df)
 # Max_Eigenvalue_Modulus Is_Stable
 # 1                 0.9922      TRUE
 
+#plot
+df_eigen <- data.frame(
+  Real = Re(eigen_vals),
+  Imag = Im(eigen_vals)
+)
+
+circle_data <- data.frame(
+  x = cos(seq(0, 2 * pi, length.out = 100)),
+  y = sin(seq(0, 2 * pi, length.out = 100))
+)
+
+stability_plot <- ggplot2::ggplot() +
+  ggplot2::geom_path(data = circle_data, ggplot2::aes(x = x, y = y), color = "black") +
+  ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+  ggplot2::geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
+  ggplot2::geom_point(data = df_eigen, ggplot2::aes(x = Real, y = Imag), 
+                      color = "darkred", size = 3, alpha = 0.7) +
+  ggplot2::coord_fixed() +
+  ggplot2::labs(title = "Inverse Roots of AR Characteristic Polynomial",
+                x = "Real",
+                y = "Imaginary") +
+  ggplot2::theme_minimal() +
+  ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5, face = "bold"),
+                 panel.border = ggplot2::element_rect(color = "black", fill = NA))
+
+print(stability_plot)
+
+ggplot2::ggsave("graphics/03_bvar_stability_roots.pdf", 
+                plot = stability_plot, 
+                width = 6, height = 6)
+
 # irf ----
 
 # ident = TRUE applies cholesky orthogonalization based on variable order
