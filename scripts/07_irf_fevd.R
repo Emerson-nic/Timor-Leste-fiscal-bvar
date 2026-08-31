@@ -96,7 +96,8 @@ timor_order_1 <- BVAR::bvar(
   verbose = TRUE 
 )
 
-#irf
+#irf ----
+
 opt_irf_order_1 <- BVAR::bv_irf(
   horizon = 20,
   identification = TRUE, # order cholesky
@@ -143,6 +144,8 @@ irf_df_order_1 <- irf_df_order_1 %>%
   dplyr::mutate(Horizon = as.numeric(as.character(Horizon))) %>%
   dplyr::arrange(Response, Horizon)
 
+print(irf_df_order_1)
+
 readr::write_csv(irf_df_order_1, "csv/irf_full_order_1.csv")
 
 #gov shock table
@@ -151,3 +154,132 @@ irf_gov_shock_df_order_1 <- irf_df_order_1 %>%
   dplyr::arrange(Response, Horizon)
 
 readr::write_csv(irf_gov_shock_df_order_1, "csv/irf_gov_shock_full_order_1.csv")
+
+#camulative irf (CIRF) ----
+
+irf_draws_order_1 <- irf_timor_order_1$irf
+print(irf_draws_order_1)
+
+dimnames(irf_draws_order_1) <- list(
+  Draw = as.character(1:4000),
+  Response = prof_names_order_1,
+  Horizon = 1:20,
+  Impulse = prof_names_order_1
+)
+
+print(irf_draws_order_1)
+
+irf_cum_draws_order_1 <- apply(irf_draws_order_1, MARGIN = c(1, 2, 4), FUN = cumsum)
+dim(irf_cum_draws_order_1)  
+
+irf_cum_draws_order_1 <- aperm(irf_cum_draws_order_1, c(2, 3, 1, 4))
+dim(irf_cum_draws_order_1)
+print(irf_cum_draws_order_1)
+identical(dim(irf_cum_draws_order_1), dim(irf_timor_order_1$irf))
+
+irf_cum_quants_order_1 <- apply(irf_cum_draws_order_1, MARGIN = c(2, 3, 4), FUN = quantile,
+                                probs = c(0.10, 0.16, 0.50, 0.84, 0.90), na.rm = TRUE)
+dim(irf_cum_quants_order_1)  
+
+identical(dim(irf_cum_quants_order_1), dim(irf_timor_order_1$quants))  
+
+dimnames(irf_cum_quants_order_1) <- list(
+  Quantile = c("10%", "16%", "50%", "84%", "90%"),
+  Response = prof_names_order_1,
+  Horizon = 1:20,
+  Impulse = prof_names_order_1
+)
+
+print(irf_cum_quants_order_1)
+
+#cirf plot ---
+irf_cum_order_1 <- irf_timor_order_1
+irf_cum_order_1$quants <- irf_cum_quants_order_1
+irf_cum_order_1$irf <- irf_cum_draws_order_1
+
+class(irf_cum_order_1) 
+
+pdf("graphics/irf_cum_full_matrix_order_1.pdf", width = 12, height = 10)
+plot(irf_cum_order_1)
+dev.off()
+
+pdf("graphics/irf_cum_gov_shock_order_1.pdf", width = 10, height = 8)
+plot(irf_cum_order_1, 
+     vars_impulse = "Gov Exp", 
+     vars_response = c("Imports", "N.O. GDP", "CPI", "Credit"))
+dev.off()
+
+#cirf table ----
+
+irf_cum_quants_arr <- apply(irf_cum_draws_order_1, MARGIN = c(2, 3, 4), FUN = quantile,
+                            probs = c(0.10, 0.16, 0.50, 0.84, 0.90), na.rm = TRUE)
+
+dim(irf_cum_quants_arr)    
+class(irf_cum_quants_arr)  
+identical(dim(irf_cum_quants_arr), dim(irf_timor_order_1$quants))  
+
+dimnames(irf_cum_quants_arr) <- list(
+  Quantile = c("10%", "16%", "50%", "84%", "90%"),
+  Response = prof_names_order_1,
+  Horizon  = 1:20,
+  Impulse  = prof_names_order_1
+)
+
+irf_cum_df_order_1 <- as.data.frame(as.table(irf_cum_quants_arr))
+colnames(irf_cum_df_order_1) <- c("Quantile", "Response", "Horizon", "Impulse", "Value")
+
+irf_cum_df_order_1 <- irf_cum_df_order_1 %>%
+  tidyr::pivot_wider(names_from = Quantile, values_from = Value) %>%
+  dplyr::mutate(Horizon = as.numeric(as.character(Horizon))) %>%
+  dplyr::arrange(Response, Horizon)
+
+print(irf_cum_df_order_1)
+readr::write_csv(irf_cum_df_order_1, "csv/irf_cumulative_order_1.csv")
+
+#fevd ----
+
+fevd_timor_order_1 <- BVAR::fevd(irf_timor_order_1)
+
+#' pdf("graphics/fevd_full_order_1.pdf", width = 12, height = 10)
+#' plot(fevd_timor_order_1)
+#' # Error en xy.coords(x, y, xlabel, ylabel, log):
+#' #'x' is a list, but does not have components 'x' and 'y'
+#' # fevd has a bug
+#' dev.off()
+
+fevd_raw_order_1 <- fevd_timor_order_1$quants
+
+dimnames(fevd_raw_order_1) <- list(
+  Quantile = c("10%", "16%", "50%", "84%", "90%"), 
+  Response = prof_names_order_1,
+  Horizon = 1:20,
+  Impulse = prof_names_order_1
+)
+
+print(fevd_raw_order_1)
+
+fevd_df_order_1 <- as.data.frame(as.table(fevd_raw_order_1)) %>%
+  tidyr::pivot_wider(names_from = Quantile, values_from = Freq) %>%
+  dplyr::mutate(Horizon = as.numeric(as.character(Horizon))) %>%
+  dplyr::arrange(Response, Horizon)
+
+print(fevd_df_order_1)
+
+fevd_median_order_1 <- fevd_df_order_1 %>%
+  ggplot2::ggplot(ggplot2::aes(x = Horizon, y = `50%`, fill = Impulse)) +
+  ggplot2::geom_area(position = "stack") +
+  ggplot2::facet_wrap(~ Response) +
+  ggplot2::labs(y = "Proportion of Explained Variance", 
+                #title = "FEVD by Variables (median)") +
+                ) +
+  ggplot2::theme_minimal()
+
+print(fevd_median_order_1)
+
+ggplot2::ggsave("graphics/fevd_median_order_1.pdf", 
+                plot = fevd_median_order_1, 
+                width = 12, height = 8)
+
+readr::write_csv(fevd_df_order_1, "csv/fevd_order_1.csv")
+
+
