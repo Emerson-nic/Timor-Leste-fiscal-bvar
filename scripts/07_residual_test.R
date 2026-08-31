@@ -3,9 +3,7 @@ options(repos = c(CRAN = "https://cloud.r-project.org"))
 if (!require("pacman")) install.packages("pacman")
 
 pacman::p_load(tidyverse,
-               BVAR,
-               coda, #for the Geweke convergence test of mcmc
-               FinTS #for the ARCH test of heteroscedasticity
+               BVAR
 )
 
 # import data if it doesn't exist in the environment
@@ -29,6 +27,8 @@ endogenous <- quarterly_log_dummy %>%
     ln_credit # 5 financial liquidity
   ) %>%
   as.matrix()
+#note: the cpi is expressed as an index
+#the other variables are in millions of dollars. 
 
 exogenous <- quarterly_log_dummy %>%
   dplyr::select(dplyr::starts_with("shock_")) %>%
@@ -43,7 +43,7 @@ var_base <- as.numeric(apply(diff(endogenous), 2, var, na.rm = TRUE))
 var_base <- pmax(var_base, 1e-5, na.rm = TRUE)
 
 priors_spec_2 <- BVAR::bv_priors(
-  hyper = "auto",
+  hyper = "lambda",
   mn = BVAR::bv_minnesota(
     # Literature standard for small/emerging economies with interpolated quarterly data:
     # Fixing/tightening lambda around 0.2 avoids overfitting the smoothness of Denton-Cholette
@@ -63,148 +63,6 @@ priors_spec_2 <- BVAR::bv_priors(
   )
 )
 
-# bvar with p=2 ----
-
-set.seed(54973997)
-timor <- BVAR::bvar(
-  data = endogenous,
-  lags = 2,
-  exogen = exogenous,
-  priors = priors_spec_2,
-  n_draw = 300000, #mcmc totals
-  n_burn = 10000, #warm-up period (initial discard)
-  thin = 5, #keep 1 out of every 5 samples, remove autocorrelation  mcmc
-  verbose = TRUE #the console displays a progress bar 
-)
-
-summary(timor)
-plot(timor)
-
-#hiperparameters
-#timor$hyper
-
-#coefficients
-#coef(timor, type = "mean")
-
-#extract residuals
-# Note on Denton-Cholette disaggregation:
-# The quarterly series were interpolated from annual data without guide variables
-# This introduces deterministic smoothness and intrinsic serial correlation
-# Therefore, Ljung-Box test rejections for autocorrelation should be interpreted
-# with caution as a property of the temporal disaggregation method, not solely 
-# BVAR misspecification.
-
-res_array <- stats::residuals(timor)
-res_median <- residuals(timor, type = "quantile", conf_bands = 0.5)
-res_median <- as.matrix(res_median)
-colnames(res_median) <- colnames(endogenous)
-
-#ARCH and Ljung-Box test ----
-diagnostics_table <- data.frame()
-
-for (i in 1:ncol(res_median)) {
-  var_name <- colnames(res_median)[i]
-  var_resid <- res_median[, i]
-  
-  #autocorrelation (Ljung-Box test)
-  #H0: there is no autocorrelation (p > 0.05 and true)
-  lb_test <- stats::Box.test(var_resid, lag = 12, type = "Ljung-Box")
-  p_lb <- lb_test$p.value
-  
-  #heteroscedasticity (ARCH test)
-  #H0: no ARCH effects(p > 0.05 and true)
-  arch_test <- FinTS::ArchTest(var_resid, lags = 12)
-  p_arch <- arch_test$p.value
-  
-  diagnostics_table <- rbind(diagnostics_table, data.frame(
-    Variable = var_name,
-    P_Value_Autocorr = round(p_lb, 4),
-    Pass_Autocorr = p_lb > 0.05,
-    P_Value_Heterosc = round(p_arch, 4),
-    Pass_Heterosc = p_arch > 0.05
-  ))
-}
-
-cat("Residual Diagnostics (Ljung-Box & ARCH)\n")
-print(diagnostics_table)
-
-#mcmc convergence test (GEWEKE & ESS) ----
-
-# Assessing convergence across Hyperparameters, Coefficients (beta), and Covariance (sigma)
-hypers_mcmc <- coda::as.mcmc(timor$hyper) 
-geweke_test <- coda::geweke.diag(hypers_mcmc)
-geweke_p_values <- 2 * stats::pnorm(-abs(geweke_test$z))
-ess_hypers <- coda::effectiveSize(hypers_mcmc)
-
-geweke_table <- data.frame(
-  Hyperparameter = names(geweke_p_values),
-  P_Value_Geweke = round(geweke_p_values, 4),
-  Eff_Sample_Size = round(ess_hypers, 1),
-  Pass_Convergence = geweke_p_values > 0.05
-)
-
-print(geweke_table)
-
-#mcmc convergence, coefficients Beta, ESS and Geweke 
-beta_mat <- matrix(timor$beta, nrow = dim(timor$beta)[1])
-beta_mcmc <- coda::as.mcmc(beta_mat)
-ess_beta <- coda::effectiveSize(beta_mcmc)
-geweke_beta <- coda::geweke.diag(beta_mcmc)
-geweke_p_beta <- 2 * stats::pnorm(-abs(geweke_beta$z))
-
-beta_table <- data.frame(
-  Parameter = paste0("beta_", 1:ncol(beta_mat)),
-  Geweke_P_Value = round(geweke_p_beta, 4),
-  Eff_Sample_Size = round(ess_beta, 1),
-  Pass_Convergence = geweke_p_beta > 0.05
-)
-print(beta_table)
-
-#mcmc convergence variance covariance (sigma)
-sigma_mat <- matrix(timor$sigma, nrow = dim(timor$sigma)[1])
-sigma_mcmc <- coda::as.mcmc(sigma_mat)
-ess_sigma <- coda::effectiveSize(sigma_mcmc)
-geweke_sigma <- coda::geweke.diag(sigma_mcmc)
-geweke_p_sigma <- 2 * stats::pnorm(-abs(geweke_sigma$z))
-
-sigma_table <- data.frame(
-  Parameter = paste0("sigma_", 1:ncol(sigma_mat)),
-  Geweke_P_Value = round(geweke_p_sigma, 4),
-  Eff_Sample_Size = round(ess_sigma, 1),
-  Pass_Convergence = geweke_p_sigma > 0.05
-)
-print(sigma_table)
-
-
-#BVAR stability 
-comp_mat <- BVAR::companion(timor)
-eigen_vals <- eigen(comp_mat)$values
-max_modulus <- max(Mod(eigen_vals))
-
-stability_df <- data.frame(
-  Max_Eigenvalue_Modulus = round(max_modulus, 4),
-  Is_Stable = max_modulus < 1
-)
-print(stability_df)
-
-# irf ----
-
-# ident = TRUE applies cholesky orthogonalization based on variable order
-irf_timor <- BVAR::irf(
-  timor,
-  horizon = 20, 
-  ident = TRUE, 
-  fevd = TRUE, #also computes forecast error variance decomposition
-  conf_bands = c(0.10, 0.16, 0.84, 0.90) # Computes 68% (0.16-0.84) 
-  #and 80% (0.10-0.90) intervals
-)
-
-plot(irf_timor, 
-     vars_impulse = "ln_gov_exp", 
-     vars_response = c("ln_imports", "ln_gdp_non", "ln_cpi", "ln_credit"))
-
-plot(irf_timor)
-
 # order cholesky 1 ----
 
 #order 1
@@ -219,8 +77,13 @@ endogenous_order_1 <- quarterly_log_dummy %>%
   as.matrix()
 
 # professional names 
-prof_names <- c("Gov Expenditure", "Imports", "Non-Oil GDP", "CPI", "Credit")
-colnames(endogenous_order_1) <- prof_names
+prof_names_order_1 <- c("Gov Exp", 
+                        "Imports", 
+                        "N.O. GDP", 
+                        "CPI", 
+                        "Credit")
+
+colnames(endogenous_order_1) <- prof_names_order_1
 
 timor_order_1 <- BVAR::bvar(
   data = endogenous_order_1,
@@ -228,7 +91,8 @@ timor_order_1 <- BVAR::bvar(
   exogen = exogenous,
   priors = priors_spec_2,
   n_draw = 300000, 
-  n_burn = 10000, 
+  n_burn = 100000,
+  n_thin = 50,
   verbose = TRUE 
 )
 
@@ -239,16 +103,51 @@ opt_irf_order_1 <- BVAR::bv_irf(
   fevd = TRUE # calculated fevd 
 )
 
-irf_timor_order_1 <- BVAR::irf(timor_order_1, 
-                       opt_irf, 
-                       conf_bands = c(0.10, 0.16, 0.84, 0.90))
+irf_timor_order_1 <- BVAR::irf(timor_order_1,
+                               opt_irf_order_1, 
+                               conf_bands = c(0.10, 0.16, 0.84, 0.90))
 
 pdf("graphics/irf_full_matrix_order_1.pdf", width = 12, height = 10)
-plot(irf_timor)
+plot(irf_timor_order_1)
 dev.off()
 
 pdf("graphics/irf_gov_shock_order_1.pdf", width = 10, height = 8)
-plot(irf_timor, 
-     vars_impulse = "Gov Expenditure", 
-     vars_response = c("Imports", "Non-Oil GDP", "CPI", "Credit"))
+plot(irf_timor_order_1, 
+     vars_impulse = "Gov Exp", 
+     vars_response = c("Imports", "N.O. GDP", "CPI", "Credit"))
 dev.off()
+
+#irf table ----
+
+names(irf_timor_order_1)
+
+irf_raw_order_1 <- irf_timor_order_1$quants
+irf_df_order_1 <- as.data.frame(as.table(irf_raw_order_1))
+
+colnames(irf_df_order_1) <- c("Quantile", "Response", "Horizon", "Impulse", "Value")
+print(irf_df_order_1)
+
+dimnames(irf_raw_order_1) <- list(
+  Quantile = c("10%", "16%", "50%", "84%", "90%"), # Computes 68% (0.16-0.84) 
+  #and 80% (0.10-0.90) intervals
+  Response = prof_names_order_1,
+  Horizon = 1:20,
+  Impulse = prof_names_order_1
+)
+
+irf_df_order_1 <- as.data.frame(as.table(irf_raw_order_1))
+print(irf_df_order_1)
+
+irf_df_order_1 <- irf_df_order_1 %>%
+  tidyr::pivot_wider(names_from = Quantile, values_from = Freq) %>%
+  dplyr::mutate(Horizon = as.numeric(as.character(Horizon))) %>%
+  dplyr::arrange(Response, Horizon)
+
+readr::write_csv(irf_df_order_1, "csv/irf_full_order_1.csv")
+
+#gov shock table
+irf_gov_shock_df_order_1 <- irf_df_order_1 %>%
+  dplyr::filter(Impulse == "Gov Exp") %>%
+  dplyr::arrange(Response, Horizon)
+
+readr::write_csv(irf_gov_shock_df_order_1, "csv/irf_gov_shock_full_order_1.csv")
