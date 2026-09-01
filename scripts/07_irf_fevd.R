@@ -290,8 +290,8 @@ readr::write_csv(fevd_df_order_1, "csv/fevd_order_1.csv")
 #order 1
 endogenous_order_2 <- quarterly_log_dummy %>%
   dplyr::select(
-    ln_gov_exp, # 1 initial shock
     ln_gdp_non, # 3 real response
+    ln_gov_exp, # 1 initial shock 
     ln_imports, # 2 fiscal leaka
     ln_cpi, # 4 price adjustment
     ln_credit # 5 financial liquidity

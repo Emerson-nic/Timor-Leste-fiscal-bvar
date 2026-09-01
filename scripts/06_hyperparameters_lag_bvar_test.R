@@ -210,18 +210,18 @@ print(table_lags_bvar_2)
 
 #resuls
 # lag_p Log_Marginal_Likelihood_2
-# 1      1                    959.85
-# 2      2                   1117.54 winner
-# 3      3                   1097.57
-# 4      4                   1073.80
-# 5      5                   1073.19
-# 6      6                   1073.63
-# 7      7                   1069.78
-# 8      8                   1057.24
-# 9      9                   1041.41
-# 10    10                   1021.53
-# 11    11                   1008.92
-# 12    12                    990.76
+# 1      1                    959.81
+# 2      2                   1117.27 winner
+# 3      3                   1094.86
+# 4      4                   1076.10
+# 5      5                   1077.83
+# 6      6                   1074.67
+# 7      7                   1070.17
+# 8      8                   1053.96
+# 9      9                   1041.13
+# 10    10                   1019.36
+# 11    11                   1009.66
+# 12    12                    985.03
 
 #final hiperparameters ----
 
@@ -376,61 +376,61 @@ beta_table <- data.frame(
 )
 print(beta_table)
 # Parameter Geweke_P_Value Eff_Sample_Size Pass_Convergence
-# var1     beta_1         0.7405          4000.0             TRUE
-# var2     beta_2         0.7575          4000.0             TRUE
-# var3     beta_3         0.3898          4000.0             TRUE
-# var4     beta_4         0.2316          4000.0             TRUE
-# var5     beta_5         0.6927          4000.0             TRUE
-# var6     beta_6         0.4650          4000.0             TRUE
-# var7     beta_7         0.6706          4000.0             TRUE
-# var8     beta_8         0.2266          4000.0             TRUE
-# var9     beta_9         0.1819          4000.0             TRUE
-# var10   beta_10         0.9047          4000.0             TRUE
-# var11   beta_11         0.7734          4000.0             TRUE
-# var12   beta_12         0.2282          4000.0             TRUE
-# var13   beta_13         0.0798          4000.0             TRUE
-# var14   beta_14         0.1919          4000.0             TRUE
-# var15   beta_15         0.8743          4187.1             TRUE
-# var16   beta_16         0.2316          4187.2             TRUE
-# var17   beta_17         0.1712          4000.0             TRUE
-# var18   beta_18         0.0609          4000.0             TRUE
-# var19   beta_19         0.0387          4000.0            FALSE
-# var20   beta_20         0.5656          4194.4             TRUE
-# var21   beta_21         0.1855          4000.0             TRUE
-# var22   beta_22         0.3010          4000.0             TRUE
-# var23   beta_23         0.9643          4000.0             TRUE
-# var24   beta_24         0.9497          4000.0             TRUE
-# var25   beta_25         0.1399          3865.4             TRUE
-# var26   beta_26         0.0950          4000.0             TRUE
-# var27   beta_27         0.5794          4000.0             TRUE
-# var28   beta_28         0.8237          4000.0             TRUE
-# var29   beta_29         0.5467          4000.0             TRUE
-# var30   beta_30         0.4072          4000.0             TRUE
-# var31   beta_31         0.0887          4000.0             TRUE
-# var32   beta_32         0.6193          4000.0             TRUE
-# var33   beta_33         0.8828          4000.0             TRUE
-# var34   beta_34         0.9018          4505.7             TRUE
-# var35   beta_35         0.7033          4000.0             TRUE
-# var36   beta_36         0.9350          3805.9             TRUE
-# var37   beta_37         0.9658          4000.0             TRUE
-# var38   beta_38         0.6703          4000.0             TRUE
-# var39   beta_39         0.7492          4000.0             TRUE
-# var40   beta_40         0.5175          4000.0             TRUE
-# var41   beta_41         0.3862          4000.0             TRUE
-# var42   beta_42         0.7075          4000.0             TRUE
-# var43   beta_43         0.5593          4000.0             TRUE
-# var44   beta_44         0.5917          4000.0             TRUE
-# var45   beta_45         0.0121          4000.0            FALSE
-# var46   beta_46         0.0735          4079.8             TRUE
-# var47   beta_47         0.0473          3901.2            FALSE
-# var48   beta_48         0.4509          4000.0             TRUE
-# var49   beta_49         0.6419          4000.0             TRUE
-# var50   beta_50         0.9541          4000.0             TRUE
-# var51   beta_51         0.2015          4126.4             TRUE
-# var52   beta_52         0.1108          4414.1             TRUE
-# var53   beta_53         0.6354          4000.0             TRUE
-# var54   beta_54         0.5409          4000.0             TRUE
-# var55   beta_55         0.9179          4000.0             TRUE
+# var1     beta_1         0.9622          4000.0             TRUE
+# var2     beta_2         0.3691          4000.0             TRUE
+# var3     beta_3         0.8312          4000.0             TRUE
+# var4     beta_4         0.3466          4000.0             TRUE
+# var5     beta_5         0.7714          4000.0             TRUE
+# var6     beta_6         0.8175          4000.0             TRUE
+# var7     beta_7         0.4648          4494.3             TRUE
+# var8     beta_8         0.6728          4000.0             TRUE
+# var9     beta_9         0.4730          4000.0             TRUE
+# var10   beta_10         0.9755          4000.0             TRUE
+# var11   beta_11         0.9426          4000.0             TRUE
+# var12   beta_12         0.5352          4000.0             TRUE
+# var13   beta_13         0.6177          4000.0             TRUE
+# var14   beta_14         0.0918          4000.0             TRUE
+# var15   beta_15         0.6638          4000.0             TRUE
+# var16   beta_16         0.2867          4188.2             TRUE
+# var17   beta_17         0.1489          4000.0             TRUE
+# var18   beta_18         0.6581          4000.0             TRUE
+# var19   beta_19         0.0870          4000.0             TRUE
+# var20   beta_20         0.7527          4216.1             TRUE
+# var21   beta_21         0.2398          4000.0             TRUE
+# var22   beta_22         0.2815          4000.0             TRUE
+# var23   beta_23         0.8798          4000.0             TRUE
+# var24   beta_24         0.0986          4000.0             TRUE
+# var25   beta_25         0.5425          4000.0             TRUE
+# var26   beta_26         0.2460          4000.0             TRUE
+# var27   beta_27         0.5386          4000.0             TRUE
+# var28   beta_28         0.7504          4000.0             TRUE
+# var29   beta_29         0.0389          4183.1            FALSE
+# var30   beta_30         0.4351          4000.0             TRUE
+# var31   beta_31         0.0710          4000.0             TRUE
+# var32   beta_32         0.5622          4000.0             TRUE
+# var33   beta_33         0.8438          4000.0             TRUE
+# var34   beta_34         0.8128          4538.2             TRUE
+# var35   beta_35         0.7929          5242.2             TRUE
+# var36   beta_36         0.2477          4000.0             TRUE
+# var37   beta_37         0.3267          4000.0             TRUE
+# var38   beta_38         0.6472          4000.0             TRUE
+# var39   beta_39         0.7704          4000.0             TRUE
+# var40   beta_40         0.8439          3412.5             TRUE
+# var41   beta_41         0.3644          3787.6             TRUE
+# var42   beta_42         0.6281          4000.0             TRUE
+# var43   beta_43         0.5588          4000.0             TRUE
+# var44   beta_44         0.5915          4000.0             TRUE
+# var45   beta_45         0.0789          4000.0             TRUE
+# var46   beta_46         0.9123          3795.8             TRUE
+# var47   beta_47         0.2324          4000.0             TRUE
+# var48   beta_48         0.6297          4000.0             TRUE
+# var49   beta_49         0.6751          4000.0             TRUE
+# var50   beta_50         0.9909          4000.0             TRUE
+# var51   beta_51         0.9161          4000.0             TRUE
+# var52   beta_52         0.0974          4445.3             TRUE
+# var53   beta_53         0.5466          4000.0             TRUE
+# var54   beta_54         0.5410          4000.0             TRUE
+# var55   beta_55         0.9180          4000.0             TRUE
 
 #mcmc convergence variance covariance (sigma)
 sigma_mat <- matrix(timor$sigma, nrow = dim(timor$sigma)[1])
@@ -447,31 +447,31 @@ sigma_table <- data.frame(
 )
 print(sigma_table)
 # Parameter Geweke_P_Value Eff_Sample_Size Pass_Convergence
-# var1    sigma_1         0.6092          4000.0             TRUE
-# var2    sigma_2         0.4658          4000.0             TRUE
-# var3    sigma_3         0.0921          4000.0             TRUE
-# var4    sigma_4         0.6341          4725.9             TRUE
-# var5    sigma_5         0.1547          4000.0             TRUE
-# var6    sigma_6         0.4658          4000.0             TRUE
-# var7    sigma_7         0.3647          4000.0             TRUE
-# var8    sigma_8         0.0599          4000.0             TRUE
-# var9    sigma_9         0.9909          4000.0             TRUE
-# var10  sigma_10         0.4705          4000.0             TRUE
-# var11  sigma_11         0.0921          4000.0             TRUE
-# var12  sigma_12         0.0599          4000.0             TRUE
-# var13  sigma_13         0.6495          3673.1             TRUE
-# var14  sigma_14         0.3329          4000.0             TRUE
-# var15  sigma_15         0.5433          3756.3             TRUE
-# var16  sigma_16         0.6341          4725.9             TRUE
-# var17  sigma_17         0.9909          4000.0             TRUE
-# var18  sigma_18         0.3329          4000.0             TRUE
-# var19  sigma_19         0.7370          4000.0             TRUE
-# var20  sigma_20         0.3013          4000.0             TRUE
-# var21  sigma_21         0.1547          4000.0             TRUE
-# var22  sigma_22         0.4705          4000.0             TRUE
-# var23  sigma_23         0.5433          3756.3             TRUE
-# var24  sigma_24         0.3013          4000.0             TRUE
-# var25  sigma_25         0.0042          4195.6            FALSE
+# var1    sigma_1         0.6810          4000.0             TRUE
+# var2    sigma_2         0.3194          4000.0             TRUE
+# var3    sigma_3         0.2533          4000.0             TRUE
+# var4    sigma_4         0.7855          4498.6             TRUE
+# var5    sigma_5         0.2323          4000.0             TRUE
+# var6    sigma_6         0.3194          4000.0             TRUE
+# var7    sigma_7         0.4115          4000.0             TRUE
+# var8    sigma_8         0.0765          4000.0             TRUE
+# var9    sigma_9         0.9226          4000.0             TRUE
+# var10  sigma_10         0.5029          4000.0             TRUE
+# var11  sigma_11         0.2533          4000.0             TRUE
+# var12  sigma_12         0.0765          4000.0             TRUE
+# var13  sigma_13         0.4793          3669.5             TRUE
+# var14  sigma_14         0.3604          4000.0             TRUE
+# var15  sigma_15         0.5590          3809.3             TRUE
+# var16  sigma_16         0.7855          4498.6             TRUE
+# var17  sigma_17         0.9226          4000.0             TRUE
+# var18  sigma_18         0.3604          4000.0             TRUE
+# var19  sigma_19         0.7469          4000.0             TRUE
+# var20  sigma_20         0.3070          4000.0             TRUE
+# var21  sigma_21         0.2323          4000.0             TRUE
+# var22  sigma_22         0.5029          4000.0             TRUE
+# var23  sigma_23         0.5590          3809.3             TRUE
+# var24  sigma_24         0.3070          4000.0             TRUE
+# var25  sigma_25         0.0041          4197.1            FALSE
 
 #BVAR stability 
 comp_mat <- BVAR::companion(timor)
@@ -484,7 +484,7 @@ stability_df <- data.frame(
 )
 print(stability_df)
 # Max_Eigenvalue_Modulus Is_Stable
-# 1                 0.9922      TRUE
+# 1                 0.9854      TRUE
 
 #plot
 df_eigen <- data.frame(
@@ -535,4 +535,4 @@ plot(irf_timor,
 
 plot(irf_timor)
 
-rm(list = ls())
+#rm(list = ls())
