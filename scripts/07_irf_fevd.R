@@ -36,7 +36,7 @@ exogenous <- quarterly_log_dummy %>%
 
 #prior lag selection and initial hyperparameters ----
 
-#it does 1 diferences, because the series has a unit root so arima can't with na
+#the series has a unit root so arima can't with na
 var_base <- as.numeric(apply(diff(endogenous), 2, var, na.rm = TRUE))
 
 #pmax() force the variance to be less than 1e-5
@@ -211,21 +211,21 @@ dev.off()
 
 #cirf table ----
 
-irf_cum_quants_arr <- apply(irf_cum_draws_order_1, MARGIN = c(2, 3, 4), FUN = quantile,
+irf_cum_quants_arr_oder_1 <- apply(irf_cum_draws_order_1, MARGIN = c(2, 3, 4), FUN = quantile,
                             probs = c(0.10, 0.16, 0.50, 0.84, 0.90), na.rm = TRUE)
 
-dim(irf_cum_quants_arr)    
-class(irf_cum_quants_arr)  
-identical(dim(irf_cum_quants_arr), dim(irf_timor_order_1$quants))  
+dim(irf_cum_quants_arr_oder_1)    
+class(irf_cum_quants_arr_oder_1)  
+identical(dim(irf_cum_quants_arr_oder_1), dim(irf_timor_order_1$quants))  
 
-dimnames(irf_cum_quants_arr) <- list(
+dimnames(irf_cum_quants_arr_oder_1) <- list(
   Quantile = c("10%", "16%", "50%", "84%", "90%"),
   Response = prof_names_order_1,
   Horizon  = 1:20,
   Impulse  = prof_names_order_1
 )
 
-irf_cum_df_order_1 <- as.data.frame(as.table(irf_cum_quants_arr))
+irf_cum_df_order_1 <- as.data.frame(as.table(irf_cum_quants_arr_oder_1))
 colnames(irf_cum_df_order_1) <- c("Quantile", "Response", "Horizon", "Impulse", "Value")
 
 irf_cum_df_order_1 <- irf_cum_df_order_1 %>%
@@ -299,9 +299,9 @@ endogenous_order_2 <- quarterly_log_dummy %>%
   as.matrix()
 
 # professional names 
-prof_names_order_2 <- c("Gov Exp", 
+prof_names_order_2 <- c("N.O. GDP",
+                        "Gov Exp", 
                         "Imports", 
-                        "N.O. GDP", 
                         "CPI", 
                         "Credit")
 
@@ -433,21 +433,21 @@ dev.off()
 
 #cirf table order 2 ----
 
-irf_cum_quants_arr <- apply(irf_cum_draws_order_2, MARGIN = c(2, 3, 4), FUN = quantile,
+irf_cum_quants_arr_order_2 <- apply(irf_cum_draws_order_2, MARGIN = c(2, 3, 4), FUN = quantile,
                             probs = c(0.10, 0.16, 0.50, 0.84, 0.90), na.rm = TRUE)
 
-dim(irf_cum_quants_arr)    
-class(irf_cum_quants_arr)  
-identical(dim(irf_cum_quants_arr), dim(irf_timor_order_2$quants))  
+dim(irf_cum_quants_arr_order_2)    
+class(irf_cum_quants_arr_order_2)  
+identical(dim(irf_cum_quants_arr_order_2), dim(irf_timor_order_2$quants))  
 
-dimnames(irf_cum_quants_arr) <- list(
+dimnames(irf_cum_quants_arr_order_2) <- list(
   Quantile = c("10%", "16%", "50%", "84%", "90%"),
   Response = prof_names_order_2,
   Horizon  = 1:20,
   Impulse  = prof_names_order_2
 )
 
-irf_cum_df_order_2 <- as.data.frame(as.table(irf_cum_quants_arr))
+irf_cum_df_order_2 <- as.data.frame(as.table(irf_cum_quants_arr_order_2))
 colnames(irf_cum_df_order_2) <- c("Quantile", "Response", "Horizon", "Impulse", "Value")
 
 irf_cum_df_order_2 <- irf_cum_df_order_2 %>%
