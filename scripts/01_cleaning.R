@@ -12,7 +12,9 @@ if(F){
 }
 
 #load library ---- 
-options(repos = c(CRAN = "https://cloud.r-project.org"))
+options(repos = c(CRAN = "https://packagemanager.posit.co/cran/2026-09-03"))
+#note if the library are update, use CRAN = "https://packagemanager.posit.co/cran/2026-09-03"
+#this install 2026-09-03 librery
 if (!require("pacman")) install.packages("pacman")
 
 pacman::p_load(readxl,
@@ -187,3 +189,4 @@ imports %>%
 readr::write_csv(imports, "csv/imports_cleaning_timor_leste.csv")
 
 rm(list = ls())
+
