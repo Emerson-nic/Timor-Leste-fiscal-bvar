@@ -102,40 +102,40 @@ for (imp in vars_names) {
     #significant order 1 (Excluyendo los ceros estructurales con != 0)
     #68% CI
     sig_68_1 <- df_sub_1$Horizon[base::sign(df_sub_1$`16%`) == base::sign(df_sub_1$`84%`) & df_sub_1$`16%` != 0]
-    #90% CI
-    sig_90_1 <- df_sub_1$Horizon[base::sign(df_sub_1$`10%`) == base::sign(df_sub_1$`90%`) & df_sub_1$`10%` != 0]
+    #80% CI
+    sig_80_1 <- df_sub_1$Horizon[base::sign(df_sub_1$`10%`) == base::sign(df_sub_1$`90%`) & df_sub_1$`10%` != 0]
     
     #significant order 2
     #68% CI
     sig_68_2 <- df_sub_2$Horizon[base::sign(df_sub_2$`16%`) == base::sign(df_sub_2$`84%`) & df_sub_2$`16%` != 0]
-    #90% CI
-    sig_90_2 <- df_sub_2$Horizon[base::sign(df_sub_2$`10%`) == base::sign(df_sub_2$`90%`) & df_sub_2$`10%` != 0]
+    #80% CI
+    sig_80_2 <- df_sub_2$Horizon[base::sign(df_sub_2$`10%`) == base::sign(df_sub_2$`90%`) & df_sub_2$`10%` != 0]
     
     #irf 1 logic
     if (base::length(sig_68_1) == 0) {
       base::cat("IRF 1: No horizons are statistically significant - 0\n\n")
-    } else if (base::length(sig_68_1) == base::nrow(df_sub_1) && base::length(sig_90_1) == base::nrow(df_sub_1)) {
+    } else if (base::length(sig_68_1) == base::nrow(df_sub_1) && base::length(sig_80_1) == base::nrow(df_sub_1)) {
       base::cat(base::paste0("IRF 1: All horizons are statistically significant - 1:", base::max(df_sub_1$Horizon), " Both credible intervals\n\n"))
     } else {
       base::cat(base::paste0("IRF 1: From horizon ", base::min(sig_68_1), " to ", base::max(sig_68_1),
                              " are significant 68% credible intervals - ", base::min(sig_68_1), ":", base::max(sig_68_1), "\n\n"))
-      if (base::length(sig_90_1) > 0) {
-        base::cat(base::paste0("From horizon ", base::min(sig_90_1), " to ", base::max(sig_90_1),
-                               " are significant 90% credible intervals - ", base::min(sig_90_1), ":", base::max(sig_90_1), "\n\n"))
+      if (base::length(sig_80_1) > 0) {
+        base::cat(base::paste0("From horizon ", base::min(sig_80_1), " to ", base::max(sig_80_1),
+                               " are significant 80% credible intervals - ", base::min(sig_80_1), ":", base::max(sig_80_1), "\n\n"))
       }
     }
     
     #irf 2 logic
     if (base::length(sig_68_2) == 0) {
       base::cat("IRF 2: No horizons are statistically significant - 0\n\n")
-    } else if (base::length(sig_68_2) == base::nrow(df_sub_2) && base::length(sig_90_2) == base::nrow(df_sub_2)) {
+    } else if (base::length(sig_68_2) == base::nrow(df_sub_2) && base::length(sig_80_2) == base::nrow(df_sub_2)) {
       base::cat(base::paste0("IRF 2: All horizons are statistically significant - 1:", base::max(df_sub_2$Horizon), " Both credible intervals\n\n"))
     } else {
       base::cat(base::paste0("IRF 2: From horizon ", base::min(sig_68_2), " to ", base::max(sig_68_2),
                              " are significant 68% credible intervals - ", base::min(sig_68_2), ":", base::max(sig_68_2), "\n\n"))
-      if (base::length(sig_90_2) > 0) {
-        base::cat(base::paste0("From horizon ", base::min(sig_90_2), " to ", base::max(sig_90_2),
-                               " are significant 90% credible intervals - ", base::min(sig_90_2), ":", base::max(sig_90_2), "\n\n"))
+      if (base::length(sig_80_2) > 0) {
+        base::cat(base::paste0("From horizon ", base::min(sig_80_2), " to ", base::max(sig_80_2),
+                               " are significant 80% credible intervals - ", base::min(sig_80_2), ":", base::max(sig_80_2), "\n\n"))
       }
     }
     

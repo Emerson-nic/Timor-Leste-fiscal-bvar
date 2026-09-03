@@ -30,8 +30,8 @@ ui <- fluidPage(
       hr(),
       h5("Legend Notes:"),
       tags$ul(
-        tags$li("Red ribbon: 90% Confidence Interval"),
-        tags$li("Red dots: Significant at 90%"),
+        tags$li("Red ribbon: 80% Confidence Interval"),
+        tags$li("Red dots: Significant at 80%"),
         tags$li("Black ribbon: 68% Confidence Interval"),
         tags$li("Black dots: Significant at 68%"),
         tags$li("Black dots: Significant at 68%"),
@@ -102,8 +102,8 @@ server <- function(input, output, session) {
     #significance flags
     df_plot <- df_plot %>%
       dplyr::mutate(
-        sig_90 = ifelse(sign(`10%`) == sign(`90%`) & `10%` != 0, `50%`, NA),
-        sig_68 = ifelse(sign(`16%`) == sign(`84%`) & `16%` != 0 & is.na(sig_90), `50%`, NA)
+        sig_80 = ifelse(sign(`10%`) == sign(`90%`) & `10%` != 0, `50%`, NA),
+        sig_68 = ifelse(sign(`16%`) == sign(`84%`) & `16%` != 0 & is.na(sig_80), `50%`, NA)
       )
     
     #add text for tooltip
@@ -112,7 +112,7 @@ server <- function(input, output, session) {
         text = paste0(
           "Horizon: ", Horizon, "\n",
           "Median: ", round(`50%`, 4), "\n",
-          "90% CI: [", round(`10%`, 4), ", ", round(`90%`, 4), "]\n",
+          "80% CI: [", round(`10%`, 4), ", ", round(`90%`, 4), "]\n",
           "68% CI: [", round(`16%`, 4), ", ", round(`84%`, 4), "]"
         )
       )
@@ -122,8 +122,8 @@ server <- function(input, output, session) {
       #baseline 0
       ggplot2::geom_hline(yintercept = 0, linetype = "dashed", color = "black", linewidth = 0.6) +
       
-      #90% CI Ribbon (Red)
-      ggplot2::geom_ribbon(ggplot2::aes(ymin = `10%`, ymax = `90%`, fill = "90% CI"), alpha = 0.15) +
+      #80% CI Ribbon (Red)
+      ggplot2::geom_ribbon(ggplot2::aes(ymin = `10%`, ymax = `90%`, fill = "80% CI"), alpha = 0.15) +
       #68% CI Ribbon (Black)
       ggplot2::geom_ribbon(ggplot2::aes(ymin = `16%`, ymax = `84%`, fill = "68% CI"), alpha = 0.25) +
       
@@ -133,14 +133,14 @@ server <- function(input, output, session) {
       #significance points 
       ggplot2::geom_point(ggplot2::aes(y = sig_68, text = text), 
                           color = "black", size = 3.5, na.rm = TRUE, show.legend = FALSE) +
-      ggplot2::geom_point(ggplot2::aes(y = sig_90, text = text), 
+      ggplot2::geom_point(ggplot2::aes(y = sig_80, text = text),
                           color = "red", size = 3.5, na.rm = TRUE, show.legend = FALSE) +
       
       #faceting
       ggplot2::facet_wrap(~ Order) +
       
       #scales
-      ggplot2::scale_fill_manual(name = "", values = c("90% CI" = "red", "68% CI" = "black")) +
+      ggplot2::scale_fill_manual(name = "", values = c("80% CI" = "red", "68% CI" = "black")) +
       ggplot2::scale_color_manual(name = "", values = c("Median" = "#2c3e50")) +
       
       ggplot2::labs(
@@ -168,5 +168,3 @@ server <- function(input, output, session) {
 
 #run the app ----
 shinyApp(ui = ui, server = server)
-
-
