@@ -31,15 +31,21 @@ ui <- fluidPage(
       tags$ul(
         tags$li("Red Ribbon/Dots = 90% Confidence Interval & Significance"),
         tags$li("Black Ribbon/Dots = 68% Confidence Interval & Significance")
-      )
+      ), 
+      hr(),
+      tags$a(href = "https://github.com/Emerson-nic/Timor-Leste-fiscal-bvar",
+             icon("github"), " For more info visit at GitHub",
+             target = "_blank",
+             style = "color: #2c3e50; font-weight: bold; text-decoration: none;")
     ),
-    
     mainPanel(
       width = 9,
       plotOutput("irf_plot", height = "650px")
     )
   )
 )
+
+
 
 #server logic ----
 server <- function(input, output, session) {
