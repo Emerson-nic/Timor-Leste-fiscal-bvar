@@ -1,0 +1,47 @@
+name: BVAR Reproduction Pipeline
+
+on:
+  push:
+    branches: [ "main", "new-dataset" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install System Dependencies (Poppler & GSL)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y poppler-utils libgsl-dev
+
+      - name: Set up R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.4.0'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install Python Dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Sequential Analysis Pipeline
+        run: |
+          Rscript scripts/01_cleaning.R
+          Rscript scripts/02_dessagregation.R
+          Rscript scripts/03_structural_failures.R
+          Rscript scripts/04_stationary_test.R
+          Rscript scripts/05_graphics.R
+          Rscript scripts/06_hyperparameters_lag_bvar_test.R
+          Rscript scripts/07_irf_fevd.R
+          python scripts/08.5_irf_combined.py
+          Rscript scripts/08_view_irf_data.R
