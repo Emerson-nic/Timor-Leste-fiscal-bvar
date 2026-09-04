@@ -287,7 +287,7 @@ readr::write_csv(fevd_df_order_1, "csv/fevd_order_1.csv")
 
 # order cholesky 2 ----
 
-#order 1
+#order 2
 endogenous_order_2 <- quarterly_log_dummy %>%
   dplyr::select(
     ln_gdp_non, # 3 real response
