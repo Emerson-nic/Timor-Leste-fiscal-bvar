@@ -8,6 +8,8 @@ scripts/06_bvartools.R
 
 # .md
 significant_irf.md
+irf.md
+fevd.md
 
 #py
 tmp1.png
