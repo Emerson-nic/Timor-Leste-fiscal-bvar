@@ -185,6 +185,19 @@ readr::write_csv(
   "Data/csv/official_data_validation.csv"
 )
 
+gov_decomposition <- validation %>%
+  dplyr::transmute(
+    year,
+    official_general_government_fce = gov_quarterly_sum,
+    development_and_ta_on_budget = gov_annual_adb - gov_quarterly_sum,
+    broad_government_expenditure_adb = gov_annual_adb
+  )
+
+readr::write_csv(
+  gov_decomposition,
+  "Data/csv/gov_fce_decomposition.csv"
+)
+
 readr::write_csv(
   official_levels,
   "Data/csv/timor_quarterly_official.csv"
