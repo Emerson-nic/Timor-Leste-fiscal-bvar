@@ -3,9 +3,7 @@ rm(list = ls())
 options(repos = c(CRAN = "https://packagemanager.posit.co/cran/2026-10-19"))
 if (!require("pacman")) install.packages("pacman")
 
-pacman::p_load(tidyverse, 
-               sandwich, 
-               lmtest)
+pacman::p_load(tidyverse, lpirfs)
 
 #sample configuration
 
@@ -41,8 +39,10 @@ exo <- data %>%
 
 H <- 12
 LAGS <- 2
+NW_LAG <- 6
+CONF_90 <- stats::qnorm(0.95)
 
-core_vars <- c("ln_gov_exp", "ln_gdp_non", "ln_imports")
+core_vars <- c("ln_gov_exp", "ln_imports", "ln_gdp_non")
 response_vars <- c(
   "ln_gov_exp", "ln_imports", "ln_gdp_non", "ln_cpi", "ln_credit"
 )
@@ -65,7 +65,6 @@ t0 <- LAGS + 1
 tt <- t0:T
 n_used <- length(tt)
 
-#lagged regressors: constant + LAGS lags of the core variables + exogenous.
 X <- matrix(1, nrow = n_used, ncol = 1)
 for (l in seq_len(LAGS)) {
   X <- cbind(X, Y[(tt - l), , drop = FALSE])
@@ -88,40 +87,75 @@ shock_raw <- as.numeric(eps[, 1])
 sd_shock <- stats::sd(shock_raw)
 shock <- shock_raw / sd_shock
 
-#local projections
+#local projections with lpirfs
 
-lp_one <- function(response, h) {
-  idx <- seq_len(length(tt) - h)
-  y <- data[[response]][tt[idx] + h]
+shock_full <- data.frame(
+  shock = c(rep(NA_real_, LAGS), shock)
+)
 
-  controls <- cbind(
-    shock = shock[idx],
-    X[idx, , drop = FALSE]
-  )
+extract_lp <- function(fit, responses) {
+  purrr::map_dfr(seq_along(responses), function(i) {
+    irf_mean <- as.numeric(fit$irf_lin_mean[i, ])
+    se_90 <- (as.numeric(fit$irf_lin_up[i, ]) - irf_mean) / CONF_90
 
-  fit <- stats::lm(y ~ controls - 1)
-  vcov_hac <- sandwich::NeweyWest(
-    fit,
-    lag = min(h + 1, 6),
-    prewhite = FALSE,
-    adjust = TRUE
-  )
-
-  coefs <- stats::coef(fit)
-  se <- sqrt(diag(vcov_hac))
-
-  tibble::tibble(
-    response = response,
-    horizon = h,
-    irf = unname(coefs["controlsshock"]),
-    se = unname(se["controlsshock"]),
-    n_obs = length(y)
-  )
+    tibble::tibble(
+      response = responses[i],
+      horizon = 0:H,
+      irf = irf_mean,
+      se = se_90,
+      n_obs = n_used - (0:H)
+    )
+  })
 }
 
-lp_results <- purrr::map_dfr(response_vars, function(v) {
-  purrr::map_dfr(0:H, function(h) lp_one(v, h))
+core_fit <- lpirfs::lp_lin_iv(
+  endog_data = data %>%
+    dplyr::select(dplyr::all_of(core_vars)) %>%
+    as.data.frame(),
+  shock = shock_full,
+  lags_endog_lin = LAGS,
+  trend = 0,
+  confint = CONF_90,
+  use_nw = TRUE,
+  nw_lag = NW_LAG,
+  nw_prewhite = FALSE,
+  adjust_se = TRUE,
+  hor = H + 1,
+  contemp_data = exo %>%
+    as.data.frame()
+)
+
+core_results <- extract_lp(core_fit, core_vars)
+
+aux_vars <- setdiff(response_vars, core_vars)
+
+aux_results <- purrr::map_dfr(aux_vars, function(v) {
+  aux_fit <- lpirfs::lp_lin_iv(
+    endog_data = data %>%
+      dplyr::select(dplyr::all_of(v)) %>%
+      as.data.frame(),
+    shock = shock_full,
+    lags_endog_lin = 0,
+    exog_data = data %>%
+      dplyr::select(dplyr::all_of(core_vars)) %>%
+      as.data.frame(),
+    lags_exog = LAGS,
+    trend = 0,
+    confint = CONF_90,
+    use_nw = TRUE,
+    nw_lag = NW_LAG,
+    nw_prewhite = FALSE,
+    adjust_se = TRUE,
+    hor = H + 1,
+    contemp_data = exo %>%
+      as.data.frame()
+  )
+
+  extract_lp(aux_fit, v)
 })
+
+lp_results <- dplyr::bind_rows(core_results, aux_results) %>%
+  dplyr::arrange(match(response, response_vars), horizon)
 
 #normalise so that the impact response of government expenditure is 1%.
 impact_gov <- lp_results %>%
@@ -137,10 +171,16 @@ lp_results <- lp_results %>%
     scale = 0.01 / impact_gov,
     irf_1pct = irf * scale,
     se_1pct = se * scale,
-    lower68 = irf_1pct - se_1pct,
-    upper68 = irf_1pct + se_1pct,
-    lower90 = irf_1pct - 1.645 * se_1pct,
-    upper90 = irf_1pct + 1.645 * se_1pct,
+    lower68 = pmin(irf_1pct - se_1pct, irf_1pct + se_1pct),
+    upper68 = pmax(irf_1pct - se_1pct, irf_1pct + se_1pct),
+    lower90 = pmin(
+      irf_1pct - 1.645 * se_1pct,
+      irf_1pct + 1.645 * se_1pct
+    ),
+    upper90 = pmax(
+      irf_1pct - 1.645 * se_1pct,
+      irf_1pct + 1.645 * se_1pct
+    ),
     response_label = dplyr::recode(response, !!!response_labels)
   )
 
@@ -202,7 +242,9 @@ readr::write_csv(
     lags = LAGS,
     horizon = H,
     shock_sd = sd_shock,
-    impact_gov = impact_gov
+    impact_gov = impact_gov,
+    nw_lag = NW_LAG,
+    engine = "lpirfs::lp_lin_iv"
   ),
   paste0("Data/csv/lp_diagnostics", config$suffix, ".csv")
 )
