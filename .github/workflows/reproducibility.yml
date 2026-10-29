@@ -27,7 +27,7 @@ jobs:
       - name: Install R packages
         run: |
           Rscript -e "install.packages('pacman', repos='https://cloud.r-project.org')"
-          Rscript -e "pacman::p_load(tidyverse, dplyr, magrittr, zoo, timeSeries, janitor, readr, tidyr, ggplot2, tibble, stringr, readxl, jsonlite, lubridate, seasonal, x13binary, forecast, BVAR, tempdisagg, strucchange, tseries, urca, sandwich, lmtest, coda, FinTS)"
+          Rscript -e "pacman::p_load(tidyverse, dplyr, magrittr, zoo, timeSeries, janitor, readr, tidyr, ggplot2, tibble, stringr, readxl, jsonlite, lubridate, seasonal, x13binary, forecast, BVAR, tempdisagg, strucchange, tseries, urca, coda, FinTS, lpirfs)"
 
       - name: Build long-sample data
         run: |
@@ -56,9 +56,13 @@ jobs:
           SAMPLE=long_3var Rscript scripts/07_irf_fevd.R
           SAMPLE=long Rscript scripts/07_irf_fevd.R
 
-      - name: Hybrid robustness
+      - name: Hybrid robustness and period decomposition
         run: |
           Rscript scripts/09_hybrid_robustness.R
+
+      - name: First-difference BVAR
+        run: |
+          Rscript scripts/10_first_difference_bvar.R
 
       - name: Local projections
         run: |
