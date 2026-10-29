@@ -5,9 +5,7 @@ if (!require("pacman")) install.packages("pacman")
 
 pacman::p_load(tidyverse, ggplot2)
 
-# ---------------------------------------------------------------------------
-# Data
-# ---------------------------------------------------------------------------
+#data
 
 official_levels <- readr::read_csv(
   "Data/csv/timor_quarterly_official.csv",
@@ -33,9 +31,7 @@ long_logs <- readr::read_csv(
 ) %>%
   dplyr::mutate(date = as.Date(date))
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
+#helpers
 
 color_palette <- c(
   "Government Expenditure" = "#b30000",
@@ -86,9 +82,7 @@ base_theme <- ggplot2::theme_classic(base_family = "serif", base_size = 14) +
     panel.grid.major.y = ggplot2::element_line(color = "gray90")
   )
 
-# ---------------------------------------------------------------------------
-# Official sample figures
-# ---------------------------------------------------------------------------
+#official sample figures
 
 official_shocks <- data.frame(
   xmin = as.Date(c("2016-01-01", "2020-01-01")),
@@ -143,9 +137,7 @@ ggplot2::ggsave(
   plot = p2_official, width = 11, height = 6.5
 )
 
-# ---------------------------------------------------------------------------
-# Long-sample figures
-# ---------------------------------------------------------------------------
+#long-sample figures
 
 long_shocks <- data.frame(
   xmin = as.Date(c(
