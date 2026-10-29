@@ -23,12 +23,15 @@
 \setlength{\parindent}{0pt}
 \setlength{\emergencystretch}{3em}
 
-\title{\textbf{Temporal Disaggregation and the Illusion of Fiscal Leakage: Evidence from Timor-Leste}}
+\title{\textbf{Temporal Disaggregation and the Fragility of Fiscal Leakage Estimates: Evidence from Timor-Leste}}
 \author{
   \begin{tabular}{c@{\hspace{2em}}c}
-    Emerson López\,\raisebox{0.25em}{\scalebox{1.25}{\orcidlink{0009-0009-6423-2883}}} & Julio Gomez\\
+    Emerson López\,\raisebox{0.25em}{\scalebox{1.25}{\orcidlink{0009-0009-6423-2883}}} & Julio Gomez \raisebox{0.25em}{\scalebox{1.25}{\orcidlink{0009-0005-2859-4810}}} \\
+    \small Universidad Nacional de Ingeniería, Nicaragua & \small Universidad Nacional de Ingeniería, Nicaragua \\
     \small\href{mailto:emerson.zeledon.ni@gmail.com}{\texttt{emerson.zeledon.ni@gmail.com}} &
+    \small\href{mailto:gomezmaltezjuliorafael@gmail.com}{\texttt{gomezmaltezjuliorafael@gmail.com}}
   \end{tabular}
+  \thanks{Corresponding author: Emerson López.}
 }
 \date{\today}
 
@@ -37,34 +40,38 @@
 
 \begin{abstract}
 \noindent
-Data-limited economies often disaggregate annual national accounts before estimating quarterly fiscal models. This paper shows that the disaggregation step can manufacture the central result. Using official quarterly national accounts for Timor-Leste from 2014Q1 to 2023Q4, a Bayesian VAR and local projections find no robust evidence that a government expenditure shock produces a large or persistent increase in imports. The estimated import response is below 0.4\% at all horizons, while the response of non-oil GDP is small and short-lived. In contrast, the same models estimated on a 2002--2023 sample built by Denton--Cholette temporal disaggregation generate a large, precisely estimated import response, peaking near 2\% in the BVAR and 24\% in local projections. The difference is not the estimator, the prior, or the identification: it is how the data are constructed. Interpolation smooths the fiscal and outcome series and induces a mechanical comovement that the VAR attributes to fiscal transmission. A hybrid model that combines a smooth, interpolated government series with official outcomes does not reproduce the leakage. The results caution against using interpolated quarterly data to identify fiscal leakage in small open economies.
+Data-limited economies often disaggregate annual national accounts before estimating quarterly fiscal models. This paper shows that both the disaggregation step and the sample window can shape the central result. Using official quarterly national accounts for Timor-Leste from 2014Q1 to 2023Q4, a Bayesian VAR and local projections find no robust evidence that a government expenditure shock produces a large or persistent increase in imports. The import response is small, between $-0.5\%$ and $0.8\%$ across horizons, while the response of non-oil GDP is small and short-lived. In contrast, the same models estimated on a 2002--2023 sample built by Denton--Cholette temporal disaggregation generate a large, precisely estimated import response, peaking near 2.1\% in the BVAR and 26\% in local projections. A 2x2 hybrid design on the common 2014--2023 window shows that neither interpolating the fiscal series nor interpolating the outcome series reproduces this leakage. The long-sample result is therefore not a mechanical consequence of interpolation alone: it is concentrated in the earlier observations and is not robust in the common window. The results caution against using long interpolated samples as a substitute for official high-frequency data and show why common-window tests are essential.
 \end{abstract}
+
+\vspace{0.4em}
+\noindent\textbf{JEL classification:} C32, E62, O53.\par
+\noindent\textbf{Keywords:} temporal disaggregation; fiscal leakage; Bayesian VAR; local projections; Timor-Leste.
 
 \section{Introduction}
 \label{sec:introduction}
 
 Timor-Leste is a small, open, petroleum-rich economy with a short macroeconomic history. Government expenditure finances state-building, infrastructure, and a large share of domestic absorption, while the productive base remains narrow. A central policy question is therefore whether fiscal expansion supports domestic non-oil activity or leaks abroad through imports. Because the country's national accounts are available at annual frequency for most of the sample, earlier versions of this analysis relied on temporally disaggregated quarterly data to estimate dynamic fiscal models.
 
-This paper revisits that question with official quarterly data. The Instituto Nacional de Estatística (INETL) publishes quarterly GDP by expenditure from 2014 onwards. We use these data to estimate a quarterly Bayesian VAR (BVAR) and local projections (LP) for 2014Q1--2023Q4, and we compare the results with those obtained from a long 2002--2023 sample constructed by univariate Denton--Cholette disaggregation. The comparison is designed to separate the effect of the estimator from the effect of the data.
+This paper revisits that question with official quarterly data. The Instituto Nacional de Estatística (INETL) publishes quarterly GDP by expenditure from 2014 onwards. We use these data to estimate a quarterly Bayesian VAR (BVAR) and local projections (LP) for 2014Q1--2023Q4, and we compare the results with those obtained from a long 2002--2023 sample constructed by univariate Denton--Cholette disaggregation. The comparison is designed to separate the estimator, the data construction, and the sample window.
 
-The main finding is that the strong leakage result is not robust. In the official sample, a three-variable BVAR with government expenditure, imports, and non-oil GDP is stable and estimates an import response below 0.1\% at short horizons and no persistent increase. Local projections confirm that the official import response is small, between $-0.4\%$ and $0.4\%$ depending on the horizon, and economically negligible relative to the long-sample estimates. Non-oil GDP shows a small impact response in the BVAR but no robust positive response in the LP. The five-variable official BVAR, which adds the CPI and private credit, is unstable because the short sample cannot support the additional dynamics; this instability is itself informative about the limits of the official sample.
+The main finding is that the strong leakage result is fragile. In the official sample, a three-variable BVAR with government expenditure, imports, and non-oil GDP is stable and estimates an import response of about $-0.03\%$ in the first quarter, $0.09\%$ after three quarters, and essentially zero thereafter; the 68\% interval includes zero at all horizons. Local projections confirm that the official import response is small, between $-0.5\%$ and $0.8\%$ depending on the horizon, and economically negligible relative to the long-sample estimates. Non-oil GDP shows a small impact response in the BVAR but no robust positive response in the LP. The five-variable official BVAR, which adds the CPI and private credit, is unstable because the short sample cannot support the additional dynamics; this instability is itself informative about the limits of the official sample.
 
-In the long interpolated sample, the same three-variable BVAR is stable and estimates a significant import response that rises to about 2.1\% after six to seven quarters. The LP estimates are larger, peaking near 24\% after two to three quarters. The long-sample results reproduce the earlier finding: imports respond earlier and more strongly than non-oil GDP. The contrast between the two samples is stark, and it survives alternative orderings, seasonal adjustment choices, and a hybrid specification that uses a broader interpolated government series with official outcomes.
+In the long interpolated sample, the same three-variable BVAR is stable and estimates a significant import response that rises to about 2.1\% after six to seven quarters. The LP estimates are larger, peaking near 26\% after two to three quarters. The long-sample results reproduce the earlier finding: imports respond earlier and more strongly than non-oil GDP. The contrast between the two samples is stark, and it survives alternative orderings and seasonal adjustment choices. It does not, however, survive a common-window test: in a 2x2 design that varies the fiscal series and the outcome series separately over 2014--2023, no cell reproduces the leakage. Interpolation alone is therefore not sufficient to generate the long-sample result.
 
-The contribution is threefold. First, the paper provides BVAR and LP estimates for Timor-Leste based on official quarterly national accounts, rather than interpolated annual data. Second, it documents a methodological pitfall: temporal disaggregation can generate spurious fiscal transmission because it imposes smoothness and a common annual benchmark on all series. Third, it offers a practical warning for policy analysis in data-limited economies: estimates of fiscal leakage based on interpolated quarterly data should be treated with caution, and the result should be tested against official high-frequency data whenever available.
+The contribution is threefold. First, the paper provides BVAR and LP estimates for Timor-Leste based on official quarterly national accounts, rather than interpolated annual data. Second, it documents the fragility of the earlier leakage result and develops a simple 2x2 decomposition that separates fiscal interpolation, outcome interpolation, and the sample window. This decomposition shows that the earlier mechanism was too broad: long interpolated samples can produce estimates that are not reproduced in a common official window, but interpolation by itself does not mechanically generate them. Third, it offers a practical warning for policy analysis in data-limited economies: estimates of fiscal leakage based on long interpolated samples should be treated with caution, and they should be tested against official high-frequency data and common-window designs whenever available.
 
 The remainder of the paper is organized as follows. Section~\ref{sec:literature} reviews the literature. Section~\ref{sec:data} describes the data and the construction of the long sample. Section~\ref{sec:method} presents the empirical strategy. Section~\ref{sec:results} reports the results and robustness checks. Section~\ref{sec:conclusion} concludes.
 
 \section{Literature}
 \label{sec:literature}
 
-The macroeconomic effects of fiscal policy have been extensively studied, but consensus on the size of fiscal multipliers remains elusive, especially in developing and resource-rich economies. \textcite{blanchard2002} introduced the structural VAR approach to identify government spending shocks and showed that spending increases typically raise output. \textcite{mountford2009} used sign restrictions to show that fiscal effects depend on the type of shock and the state of the economy. For small open economies, the literature emphasizes that multipliers tend to be smaller because part of the stimulus is absorbed by imports. \textcite{ilzetzki2013} find lower multipliers in economies with more open trade regimes and more flexible exchange rates. Resource-rich economies face additional challenges: commodity-price volatility and Dutch-disease pressures complicate the conduct of fiscal policy \parencite{frankel2012}.
+The macroeconomic effects of fiscal policy have been extensively studied, but consensus on the size of fiscal multipliers remains elusive, especially in developing and resource-rich economies. \textcite{blanchard2002} introduced the structural VAR approach to identify government spending shocks and showed that spending increases typically raise output. \textcite{mountford2009} used sign restrictions to show that fiscal effects depend on the type of shock and the state of the economy. For small open economies, the literature emphasizes that multipliers tend to be smaller because part of the stimulus is absorbed by imports. \textcite{ilzetzki2013} find lower multipliers in economies with more open trade regimes and more flexible exchange rates. Evidence for Southeast Asia, including ASEAN member states, points in the same direction: fiscal multipliers are typically modest and sensitive to the import content of spending \parencite{tang2013,dime2021}; a calibration for Cambodia also implies a low first-year multiplier \parencite{baksa2020}. Resource-rich economies face additional challenges: commodity-price volatility and Dutch-disease pressures complicate the conduct of fiscal policy \parencite{frankel2012}.
 
 Vector autoregressions are the standard tool for dynamic multivariate analysis, but short time series make unrestricted OLS estimates unreliable. Bayesian VARs, introduced to macroeconomics by \textcite{litterman1986} and refined by \textcite{giannone2015}, impose prior beliefs that shrink the parameter space and can produce stable responses even with limited observations. The \texttt{BVAR} package of \textcite{bvar2021} implements hierarchical prior selection for these models.
 
-A separate literature addresses the construction of high-frequency data from annual benchmarks. \textcite{denton1971} proposed a quadratic minimization method, extended by \textcite{cholette1984}; \textcite{saxsteiner2013} and the \texttt{tempdisagg} package implement these methods in R. Temporal disaggregation is widely used in data-poor settings, but it is not a source of new information: it distributes an annual total using a smoothness criterion or a related indicator. The resulting quarterly series are mechanically smooth and share the annual benchmark with the other disaggregated variables. This paper shows that such shared smoothness can be mistaken for dynamic causal transmission.
+A separate literature addresses the construction of high-frequency data from annual benchmarks. \textcite{denton1971} proposed a quadratic minimization method, extended by \textcite{cholette1984}; \textcite{saxsteiner2013} and the \texttt{tempdisagg} package implement these methods in R. Temporal disaggregation is widely used in data-poor settings, but it is not a source of new information: it distributes an annual total using a smoothness criterion or a related indicator. The resulting quarterly series are mechanically smooth and share the annual benchmark with the other disaggregated variables. This paper asks whether such shared smoothness is sufficient to generate spurious fiscal transmission. The answer is negative: shared smoothness can distort estimates, but its effect depends on the sample window, so it cannot be inferred from a long interpolated sample alone.
 
-Studies of fiscal policy in Timor-Leste are scarce, but the available estimates point to small multipliers. \textcite{worldbank2021} estimates an impact multiplier of 0.17 and a cumulative multiplier of 0.08 using a quarterly SVAR for 2010--2019 with real quarterly data. \textcite{imf2024} reports multipliers of 0.1--0.2, attributing the small size to the low quality and high import content of public spending. These estimates are consistent with the small official-data responses documented below, and they are difficult to reconcile with the large leakage implied by the interpolated sample. This paper contributes by combining official quarterly data with a transparent comparison to the interpolated sample, and by showing that the difference between the two is large enough to change the substantive conclusion.
+Studies of fiscal policy in Timor-Leste are scarce, but the available estimates point to small multipliers. \textcite{worldbank2021} estimates an impact multiplier of 0.17 and a cumulative multiplier of 0.08 using a quarterly SVAR for 2010--2019 with real quarterly data. \textcite{imf2024} reports multipliers of 0.1--0.2, attributing the small size to the low quality and high import content of public spending. These estimates are consistent with the small official-data responses documented below, and they are difficult to reconcile with the large leakage implied by the long interpolated sample. This paper contributes by combining official quarterly data with a transparent comparison to the interpolated sample, and by showing that the long-sample result is fragile in a common-window design.
 
 \section{Data}
 \label{sec:data}
@@ -104,7 +111,7 @@ Variable & Interpretation & Official baseline (2014--2023) & Long-sample compari
 
 The official quarterly GDP and import series aggregate almost exactly to the annual ADB series \parencite{adb2025}. Over 2014--2023, the largest absolute difference between the sum of the four quarterly observations and the annual figure is 0.85 million USD for GDP (2016) and 1.10 million USD for imports (2021). These differences are negligible relative to annual levels of about 1,500--1,650 million USD for GDP and 730--980 million USD for imports.
 
-Two source differences require attention. First, the official General Government FCE is systematically lower than the ADB government expenditure series, by 180 million USD in 2014 and 124 million USD in 2023. The official measure is a national-accounts component and is narrower than the ADB aggregate, which may include other public spending. Second, the BCTL domestic credit series matches the ADB private credit series until 2017, but is about 50 million USD lower from 2018 to 2022 and 6 million USD lower in 2023. The break is consistent with a definitional change in the monetary survey. We use the BCTL series for the official sample and report the discrepancy rather than forcing the two sources to match. Table~\ref{tab:validation} summarizes the comparison.
+Two source differences require attention. First, official General Government FCE is systematically lower than the ADB government expenditure series. The gap ranges from 180.5 million USD in 2014 to 123.9 million USD in 2023 and matches the on-budget Development and Technical Assistance component that the ADB reports separately. The ADB broad aggregate is therefore the sum of the narrow national-accounts measure and this component; Table~\ref{tab:gov_decomposition} reports the reconciliation. This matters for the interpretation of the hybrid design: the broader fiscal measure is not an arbitrary alternative, but the ADB aggregate that earlier work used. Second, the BCTL domestic credit series matches the ADB private credit series until 2017, but is about 50 million USD lower from 2018 to 2022 and 6 million USD lower in 2023. The break is consistent with a definitional change in the monetary survey. We use the BCTL series for the official sample and report the discrepancy rather than forcing the two sources to match. Table~\ref{tab:validation} summarizes the comparison.
 
 \begin{table}[htbp]
 \centering
@@ -118,13 +125,40 @@ Series & Comparison & Result \\
 \midrule
 GDP & Sum of quarters vs annual ADB & Max.\ absolute difference 0.85 (2016) \\
 Imports & Sum of quarters vs annual ADB & Max.\ absolute difference 1.10 (2021) \\
-Government FCE & Sum of quarters vs ADB government expenditure & 124--180 million USD lower every year \\
+Government FCE & Sum of quarters vs ADB government expenditure & Gap equals Development \& TA (on-budget) \\
 Private credit & Q4 vs annual ADB & About 50 million USD lower in 2018--2022 \\
 \bottomrule
 \end{tabular}}
 \par\vspace{0.3em}
 \begin{minipage}{0.95\textwidth}
 \footnotesize\textit{Note:} Differences are in millions of USD. Source: Author's elaboration from INETL, ADB, and BCTL data.
+\end{minipage}
+\end{table}
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Reconciliation of government expenditure, 2014--2023 (millions of USD)}
+\label{tab:gov_decomposition}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+Year & Official GFC & Development \& TA & ADB broad aggregate \\
+\midrule
+2014 & 724 & 180 & 904 \\
+2015 & 776 & 161 & 937 \\
+2016 & 773 & 154 & 927 \\
+2017 & 718 & 155 & 873 \\
+2018 & 726 & 144 & 870 \\
+2019 & 769 & 129 & 898 \\
+2020 & 816 & 126 & 942 \\
+2021 & 834 & 135 & 969 \\
+2022 & 833 & 133 & 966 \\
+2023 & 834 & 124 & 958 \\
+\bottomrule
+\end{tabular}
+\par\vspace{0.3em}
+\begin{minipage}{0.95\textwidth}
+\footnotesize\textit{Note:} Official GFC is General Government final consumption expenditure from INETL Table~7.1. Development \& TA is the on-budget Development and Technical Assistance component that reconciles the national-accounts measure with the ADB broad government expenditure series. Values are rounded. Source: Author's elaboration from INETL and ADB data; see \texttt{Data/csv/gov\_fce\_decomposition.csv}.
 \end{minipage}
 \end{table}
 
@@ -197,16 +231,16 @@ The three-variable specification is chosen because the official sample has only 
 \subsection{Local projections}
 \label{sec:lp}
 
-Local projections provide a complementary estimate that does not rely on the full VAR dynamics. We estimate a three-variable VAR with the same variables, lags, and dummies, extract the recursively identified government expenditure shock, and project each outcome on the shock and its pre-determined controls:
+Local projections provide a complementary estimate that does not rely on the full VAR dynamics \parencite{jorda2005}. We estimate a three-variable VAR with the same variables, lags, and dummies, extract the recursively identified government expenditure shock, and project each outcome on the shock and its pre-determined controls:
 \[
 y_{t+h} = \alpha_h + \beta_h \varepsilon_t + \Gamma_h X_{t-1} + u_{t+h},
 \]
-where $X_{t-1}$ contains a constant, two lags of the three core variables, and the event dummies. The coefficient $\beta_h$ is the response at horizon $h$. Standard errors are Newey--West HAC with bandwidth $\min(h+1,6)$. The shock is normalized so that the impact response of government expenditure is 1\%, which makes the LP coefficients directly comparable to the BVAR elasticities. We report horizons 0--12.
+where $X_{t-1}$ contains a constant, two lags of the three core variables, and the event dummies. The coefficient $\beta_h$ is the response at horizon $h$. For government expenditure, imports, and non-oil GDP we implement the IV local-projection estimator of \textcite{adammer2019} using \texttt{lpirfs}; for the CPI and private credit we use the same estimator with the two core lags as exogenous controls, so that all five responses share the same shock and information set. The HAC bandwidth is fixed at six quarters, and standard errors are finite-sample adjusted. The shock is normalized so that the impact response of government expenditure is 1\%, which makes the LP coefficients directly comparable to the BVAR elasticities. We report horizons 0--12.
 
 \subsection{Stability and stationarity}
 \label{sec:stability}
 
-Table~\ref{tab:stability} reports the maximum modulus of the companion matrix for each specification. The official three-variable model is stable (0.795), as are the long-sample three- and five-variable models (0.983 and 0.993). The official five-variable model is unstable (1.089), and we do not interpret its impulse responses. The hybrid model, which replaces the official government series with the broader interpolated ADB series while keeping official outcomes, is stable (0.940). The unadjusted official model is also stable (0.701).
+Table~\ref{tab:stability} reports the maximum modulus of the companion matrix for each specification. The official three-variable model is stable (0.795), as are the long-sample three- and five-variable models (0.983 and 0.993). The official five-variable model is unstable (1.089), and we do not interpret its impulse responses. All four 2x2 cells are stable over the common 2014--2023 window. The pre-2014 subsample alone is not stable (1.015), so we report its responses only as a descriptive diagnostic and do not use them for inference.
 
 \begin{table}[htbp]
 \centering
@@ -222,7 +256,10 @@ Model & Sample & Observations & Max.\ modulus & Stable \\
 3-variable BVAR, NSA & Official, 2014--2023 & 40 & 0.701 & Yes \\
 3-variable BVAR & Long, 2002--2023 & 88 & 0.983 & Yes \\
 5-variable BVAR & Long, 2002--2023 & 88 & 0.993 & Yes \\
-3-variable BVAR & Hybrid, 2014--2023 & 40 & 0.940 & Yes \\
+3-variable BVAR, Hybrid-F & 2014--2023 & 40 & 0.940 & Yes \\
+3-variable BVAR, Hybrid-O & 2014--2023 & 40 & 0.933 & Yes \\
+3-variable BVAR, Interpolated both & 2014--2023 & 40 & 0.984 & Yes \\
+3-variable BVAR, Interpolated both & 2002--2013 & 48 & 1.015 & No \\
 \bottomrule
 \end{tabular}
 \par\vspace{0.3em}
@@ -315,7 +352,7 @@ The five-variable official BVAR produces qualitatively similar results but is un
 \subsection{Official local projections}
 \label{sec:official_lp}
 
-Figure~\ref{fig:lp_official} and Table~\ref{tab:lp_elasticities} report the local-projection estimates. The official import response is small and imprecisely estimated: $-0.12\%$ at impact, $0.10\%$ after one quarter, $-0.38\%$ after two quarters, and $0.34$--$0.36\%$ after six to twelve quarters. The negative response at two quarters is statistically distinguishable from zero at the 68\% level, but its magnitude is negligible. The positive responses at six and twelve quarters are also small, below 0.4\%. Non-oil GDP is close to zero at all horizons, with a negative point estimate at three quarters ($-0.23\%$) and a positive but insignificant estimate at twelve quarters ($0.37\%$). The CPI and credit responses are close to zero.
+Figure~\ref{fig:lp_official} and Table~\ref{tab:lp_elasticities} report the local-projection estimates. The official import response is small and imprecisely estimated: $0.52\%$ at impact, $0.10\%$ after one quarter, $-0.42\%$ after two quarters, $0.16\%$ after three quarters, and $0.48$--$0.51\%$ after six to twelve quarters. The negative response at two quarters is statistically distinguishable from zero at the 68\% level, but its magnitude is negligible and it is offset at the other horizons. All import responses lie between $-0.5\%$ and $0.8\%$. Non-oil GDP is close to zero after the impact quarter, with a negative point estimate at impact ($-0.37\%$), a positive but insignificant estimate after one quarter ($0.23\%$), and a negative estimate at six quarters ($-0.37\%$). The CPI and credit responses are close to zero.
 
 \begin{figure}[htbp]
 \centering
@@ -333,18 +370,18 @@ Figure~\ref{fig:lp_official} and Table~\ref{tab:lp_elasticities} report the loca
 \toprule
 Response & Horizon & Official sample & Long sample \\
 \midrule
-Imports & 0 & $-0.12\ [-0.37,\ 0.13]$ & $8.11\ [7.43,\ 8.79]$ \\
-Imports & 1 & $0.10\ [-0.06,\ 0.27]$ & $17.54\ [15.73,\ 19.35]$ \\
-Imports & 2 & $-0.38\ [-0.53,\ -0.22]$ & $23.62\ [20.66,\ 26.58]$ \\
-Imports & 3 & $0.15\ [0.01,\ 0.30]$ & $23.65\ [19.10,\ 28.21]$ \\
-Imports & 6 & $0.34\ [0.23,\ 0.46]$ & $0.71\ [-7.52,\ 8.94]$ \\
-Imports & 12 & $0.36\ [0.19,\ 0.54]$ & $11.05\ [3.97,\ 18.14]$ \\
-Non-oil GDP & 0 & $0.07\ [-0.21,\ 0.36]$ & $0.15\ [-0.14,\ 0.44]$ \\
-Non-oil GDP & 1 & $0.03\ [-0.21,\ 0.26]$ & $0.57\ [-0.15,\ 1.29]$ \\
-Non-oil GDP & 2 & $0.16\ [-0.04,\ 0.37]$ & $1.14\ [0.03,\ 2.25]$ \\
-Non-oil GDP & 3 & $-0.23\ [-0.40,\ -0.06]$ & $1.74\ [0.37,\ 3.11]$ \\
-Non-oil GDP & 6 & $-0.26\ [-0.58,\ 0.06]$ & $2.90\ [0.81,\ 5.00]$ \\
-Non-oil GDP & 12 & $0.37\ [-0.11,\ 0.85]$ & $6.25\ [4.26,\ 8.24]$ \\
+Imports & 0 & $0.52\ [0.37,\ 0.68]$ & $9.06\ [7.99,\ 10.13]$ \\
+Imports & 1 & $0.10\ [-0.21,\ 0.41]$ & $19.52\ [17.24,\ 21.80]$ \\
+Imports & 2 & $-0.42\ [-0.58,\ -0.25]$ & $26.14\ [22.68,\ 29.60]$ \\
+Imports & 3 & $0.16\ [-0.04,\ 0.36]$ & $25.97\ [21.02,\ 30.92]$ \\
+Imports & 6 & $0.48\ [0.31,\ 0.65]$ & $0.31\ [-9.05,\ 9.66]$ \\
+Imports & 12 & $0.51\ [0.29,\ 0.73]$ & $11.82\ [3.76,\ 19.89]$ \\
+Non-oil GDP & 0 & $-0.37\ [-0.62,\ -0.12]$ & $0.05\ [-0.48,\ 0.57]$ \\
+Non-oil GDP & 1 & $0.23\ [-0.03,\ 0.50]$ & $0.35\ [-0.76,\ 1.47]$ \\
+Non-oil GDP & 2 & $0.04\ [-0.22,\ 0.30]$ & $0.84\ [-0.70,\ 2.38]$ \\
+Non-oil GDP & 3 & $-0.06\ [-0.32,\ 0.20]$ & $1.42\ [-0.29,\ 3.14]$ \\
+Non-oil GDP & 6 & $-0.37\ [-0.79,\ 0.06]$ & $2.81\ [0.43,\ 5.20]$ \\
+Non-oil GDP & 12 & $0.33\ [-0.10,\ 0.77]$ & $6.78\ [4.46,\ 9.10]$ \\
 \bottomrule
 \end{tabular}
 \par\vspace{0.3em}
@@ -353,7 +390,7 @@ Non-oil GDP & 12 & $0.37\ [-0.11,\ 0.85]$ & $6.25\ [4.26,\ 8.24]$ \\
 \end{minipage}
 \end{table}
 
-Taken together, the official BVAR and LP provide no evidence of a large or persistent import leakage. The BVAR estimates an import response below 0.1\% at short horizons; the LP estimates a small positive response of about 0.3--0.4\% at longer horizons, but it is an order of magnitude smaller than the long-sample estimates and does not support the view that fiscal stimulus is largely spent abroad. The GDP response is fragile: the BVAR finds a short-lived positive impact effect, while the LP finds a small negative effect at three quarters. The robust conclusion is that the official data do not identify a positive output effect that persists.
+Taken together, the official BVAR and LP provide no evidence of a large or persistent import leakage. The BVAR estimates an import response below 0.1\% at short horizons; the LP estimates a small positive response of about 0.5\% at longer horizons, but it is an order of magnitude smaller than the long-sample estimates and does not support the view that fiscal stimulus is largely spent abroad. The GDP response is fragile: the BVAR finds a short-lived positive impact effect, while the LP finds a small negative effect at impact and six quarters. The robust conclusion is that the official data do not identify a positive output effect that persists.
 
 \subsection{The long-sample result}
 \label{sec:long_results}
@@ -376,7 +413,7 @@ For comparison, Figure~\ref{fig:irf_long} and the last two columns of Table~\ref
 \label{fig:irf_long}
 \end{figure}
 
-The long-sample LP estimates are larger still (Figure~\ref{fig:lp_long} and Table~\ref{tab:lp_elasticities}). The import response rises from 8.1\% at impact to 23.6\% after two quarters and 23.7\% after three quarters, then becomes imprecise at intermediate horizons. The GDP response rises gradually to 6.25\% after twelve quarters. The LP and BVAR agree on the qualitative pattern: in the long sample, imports respond earlier and more strongly than GDP. The magnitude differs because the LP imposes less structure and estimates the response separately at each horizon; the LP estimates are larger at the peak but less stable across horizons, and they should be read as complementary evidence rather than a strict upper bound.
+The long-sample LP estimates are larger still (Figure~\ref{fig:lp_long} and Table~\ref{tab:lp_elasticities}). The import response rises from 9.1\% at impact to 19.5\% after one quarter, 26.1\% after two quarters, and 26.0\% after three quarters, then becomes imprecise at intermediate horizons before returning to 11.8\% after twelve quarters. The GDP response rises gradually to 6.78\% after twelve quarters. The LP and BVAR agree on the qualitative pattern: in the long sample, imports respond earlier and more strongly than GDP. The magnitude differs because the LP imposes less structure and estimates the response separately at each horizon; the LP estimates are larger at the peak but less stable across horizons, and they should be read as complementary evidence rather than a strict upper bound.
 
 \begin{figure}[htbp]
 \centering
@@ -390,18 +427,64 @@ The long-sample LP estimates are larger still (Figure~\ref{fig:lp_long} and Tabl
 
 The contrast between the official and long-sample results is not driven by the estimator, the prior, or the identification. The same three-variable BVAR, with the same lags, prior, and ordering, produces a near-zero import response in the official sample and a large, significant response in the long sample. The difference must therefore come from the data: either their construction or the sample period.
 
-The mechanism is temporal disaggregation. Denton--Cholette distributes each annual total across quarters using a smoothness criterion. When all series are disaggregated in this way, they share a common annual benchmark and a common smooth trend. The resulting quarterly series have little high-frequency independent variation (Table~\ref{tab:volatility}). A VAR estimated on these series sees a strong positive comovement between government expenditure and imports, and the recursive identification attributes it to the fiscal shock. The long-sample impulse response is large because the interpolated series move together by construction.
+A simple 2x2 design separates the two dimensions. We estimate four cells over the common 2014--2023 window: the official baseline; Hybrid-F, which replaces official government expenditure with the interpolated ADB broad series while keeping official outcomes; Hybrid-O, which keeps official government expenditure and replaces the outcomes with interpolated series; and Interpolated both, which uses interpolated fiscal and outcome series. All cells use the same three-variable BVAR, two lags, prior, sampler, event dummies, and ordering. Table~\ref{tab:hybrid2x2} reports the import response at horizons 1, 3, 6, and 12. No cell reproduces the large and persistent leakage. Hybrid-F has wide intervals and an import response between $-0.28\%$ and $0.18\%$. Hybrid-O is close to zero at every horizon. Interpolated both is $-0.04\%$ after one quarter and $0.31\%$ after twelve quarters, with intervals that include zero throughout. This is a direct test of the interpolation hypothesis: if joint interpolation were sufficient to manufacture the result, the Interpolated both cell should reproduce it over the common window. It does not.
 
-The official data break this comovement. Quarterly government expenditure, GDP, and imports each contain independent high-frequency variation. The fiscal shock is therefore identified from a much smaller and noisier component of the data, and the estimated import response is small. The official BVAR's maximum companion modulus is below one, so the result is not a symptom of instability.
+\begin{table}[htbp]
+\centering
+\small
+\caption{Common-window 2x2 hybrid design, 2014--2023 (percent)}
+\label{tab:hybrid2x2}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Cell & Fiscal series & Outcome series & Imports $h=1$ & Imports $h=3$ & Imports $h=6$ & Imports $h=12$ \\
+\midrule
+Official baseline & Official GFC & Official & $-0.03\ [-0.16,\ 0.10]$ & $0.09\ [-0.06,\ 0.24]$ & $0.00\ [-0.08,\ 0.09]$ & $0.00\ [-0.04,\ 0.02]$ \\
+Hybrid-F & Interpolated ADB broad & Official & $-0.28\ [-1.31,\ 0.76]$ & $-0.03\ [-0.80,\ 0.82]$ & $0.18\ [-0.84,\ 1.25]$ & $0.16\ [-0.86,\ 1.29]$ \\
+Hybrid-O & Official GFC & Interpolated & $0.00\ [-0.04,\ 0.04]$ & $0.01\ [-0.06,\ 0.08]$ & $0.03\ [-0.05,\ 0.11]$ & $0.02\ [-0.04,\ 0.12]$ \\
+Interpolated both & Interpolated ADB broad & Interpolated & $-0.04\ [-0.38,\ 0.31]$ & $0.05\ [-0.32,\ 0.42]$ & $0.16\ [-0.30,\ 0.69]$ & $0.31\ [-0.35,\ 1.21]$ \\
+\bottomrule
+\end{tabular}}
+\par\vspace{0.3em}
+\begin{minipage}{0.95\textwidth}
+\footnotesize\textit{Note:} Posterior medians with 68\% credible intervals in brackets. Responses are rescaled to a 1\% increase in government expenditure and use order 1. All four cells are stable; see Table~\ref{tab:stability}. The official baseline is the same model as in Table~\ref{tab:bvar_elasticities}. Source: Author's elaboration.
+\end{minipage}
+\end{table}
 
-Two additional checks support this interpretation. First, the hybrid model replaces the official government series with the broader ADB government series, interpolated to quarterly frequency, while keeping official GDP and imports. If the absence of leakage were due to the narrow official measure of government consumption, the hybrid should restore the leakage. It does not: the hybrid is stable (0.940) and its import response is between $-0.3\%$ and $0.2\%$ at all horizons. Second, the unadjusted official model, which uses quarterly dummies instead of X-13 adjustment, produces a short-lived first-quarter import spike (0.39\%) but no persistent response; the seasonal spike disappears by the second quarter. Neither check restores the long-sample result. The leakage is a property of the jointly interpolated data, not of the fiscal measure alone. One caveat is that the long sample also covers 2002--2013, a period for which official quarterly outcomes are unavailable. The hybrid check holds the sample period and the outcome series fixed and varies only the fiscal measure; because it does not restore the leakage, the result is unlikely to be driven by the broader fiscal measure alone. The joint interpolation of the outcome series remains the most plausible mechanism, but the comparison cannot fully separate interpolation from period-specific shocks.
+The long sample differs from the common-window interpolated cell because it also includes 2002--2013. Table~\ref{tab:period} reports a descriptive decomposition. On 2002--2013, the point estimates are large ($0.34\%$ after one quarter, $1.27\%$ after three, $1.97\%$ after six, and $1.30\%$ after twelve), but the maximum companion modulus is 1.015, so that specification is unstable and we do not interpret it. On 2014--2023, the interpolated cell is close to zero, while the full 2002--2023 model is stable and reproduces the leakage. The gap is therefore associated with the earlier observations, not with interpolation in the common window. Because the pre-2014 subsample is unstable, we cannot separately identify whether the earlier result reflects period-specific shocks, an interaction between those shocks and interpolation, or the particular annual variation in that period. We treat it as a cautionary finding rather than a structural estimate.
 
-The five-variable official model is unstable, but its point responses are also small and short-lived. We do not interpret them because the companion roots exceed one. The instability is consistent with the short sample: adding the CPI and credit doubles the number of parameters without adding enough observations. The long sample supports the five-variable model, which is why earlier work could estimate it; the cost is that the additional observations are interpolated.
+\begin{table}[htbp]
+\centering
+\small
+\caption{Period decomposition of the import response, order 1 (percent)}
+\label{tab:period}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+Sample & Observations & Max.\ modulus & Imports $h=1$ & Imports $h=6$ & Imports $h=12$ \\
+\midrule
+Official, 2014--2023 & 40 & 0.795 & $-0.03$ & $0.00$ & $0.00$ \\
+Interpolated, 2014--2023 & 40 & 0.984 & $-0.04$ & $0.16$ & $0.31$ \\
+Interpolated, 2002--2013 & 48 & 1.015 & $0.34$ & $1.97$ & $1.30$ \\
+Interpolated, 2002--2023 & 88 & 0.983 & $0.34$ & $2.08$ & $1.30$ \\
+\bottomrule
+\end{tabular}}
+\par\vspace{0.3em}
+\begin{minipage}{0.95\textwidth}
+\footnotesize\textit{Note:} Median import responses to a 1\% government expenditure shock. The 2002--2013 model is unstable and is reported for diagnosis only. The 2014--2023 official and interpolated rows are the corresponding cells of Table~\ref{tab:hybrid2x2}. Source: Author's elaboration.
+\end{minipage}
+\end{table}
+
+This reinterpretation qualifies the earlier mechanism. Denton--Cholette does smooth the series and removes high-frequency independent variation (Table~\ref{tab:volatility}), but shared smoothness alone is not enough to produce a large import response in 2014--2023. Conversely, the official data contain independent quarterly variation, yet the absence of leakage is not simply a mechanical consequence of that variation either. The long-sample result is a joint product of the earlier sample and the construction of the data, and the common-window design shows why it should not be generalized.
+
+A final check addresses seasonal adjustment. The unadjusted official model, which uses quarterly dummies instead of X-13 adjustment, produces a short-lived first-quarter import spike (0.39\%) but no persistent response; the spike disappears by the second quarter. Seasonal adjustment is therefore not driving the official result. The broader fiscal measure alone does not restore the leakage (Hybrid-F), interpolated outcomes alone do not restore it (Hybrid-O), and joint interpolation in the common window does not restore it (Interpolated both).
+
+The five-variable official model is unstable, but its point responses are also small and short-lived. We do not interpret them because the companion roots exceed one. The instability is consistent with the short sample: adding the CPI and credit doubles the number of parameters without adding enough observations. The long sample supports the five-variable model, which is why earlier work could estimate it; the cost is that the additional observations are interpolated and come from an earlier period.
 
 \subsection{Robustness}
 \label{sec:robustness}
 
-Table~\ref{tab:robustness} collects the alternative specifications. The official unadjusted model is stable and produces a first-quarter import response of 0.39\%, but the response turns negative in the second and third quarters and is essentially zero thereafter. The official five-variable model is unstable and is not used for inference. The hybrid model is stable and produces import responses between $-0.3\%$ and $0.2\%$, with intervals that include zero. The long three- and five-variable models are stable and produce significant import responses of about 2\% at the peak. The qualitative conclusion is unchanged across specifications: the official data do not support a large, persistent leakage; the long interpolated data do.
+Table~\ref{tab:robustness} collects the alternative specifications. The official unadjusted model is stable and produces a first-quarter import response of 0.39\%, but the response turns negative in the second and third quarters and is essentially zero thereafter. The official five-variable model is unstable and is not used for inference. Hybrid-F is stable and produces import responses between $-0.3\%$ and $0.2\%$, with intervals that include zero. The long three- and five-variable models are stable and produce significant import responses of about 2\% at the peak. The qualitative conclusion is unchanged across specifications: the official data do not support a large, persistent leakage; the long interpolated data do.
 
 \begin{table}[htbp]
 \centering
@@ -418,32 +501,35 @@ Official 5-var & 2014--2023 & 1.089 & $-0.06$ & $0.05$ & $0.00$ & $-0.05$ \\
 Official 3-var, NSA & 2014--2023 & 0.701 & $0.39$ & $-0.09$ & $0.00$ & $0.04$ \\
 Long 3-var & 2002--2023 & 0.983 & $0.34$ & $1.22$ & $1.30$ & $0.08$ \\
 Long 5-var & 2002--2023 & 0.993 & $0.35$ & $1.25$ & $1.26$ & $0.04$ \\
-Hybrid 3-var & 2014--2023 & 0.940 & $-0.28$ & $-0.03$ & $0.16$ & $-0.19$ \\
+Hybrid-F 3-var & 2014--2023 & 0.940 & $-0.28$ & $-0.03$ & $0.16$ & $-0.19$ \\
+Official 3-var, first differences & 2014--2023 & 0.586 & $-0.06$ & $-0.07$ & $-0.08$ & $0.49$ \\
 \bottomrule
 \end{tabular}}
 \par\vspace{0.3em}
 \begin{minipage}{0.95\textwidth}
-\footnotesize\textit{Note:} Responses are medians in percent, rescaled to a 1\% increase in government expenditure. The hybrid model uses the interpolated ADB government series with official GDP and imports. The official 5-variable model is unstable and its responses are reported only for completeness. Source: Author's elaboration.
+\footnotesize\textit{Note:} Responses are medians in percent, rescaled to a 1\% increase in government expenditure. Hybrid-F uses the interpolated ADB government series with official GDP and imports. The first-difference row reports cumulative responses. The official 5-variable model is unstable and its responses are reported only for completeness. Source: Author's elaboration.
 \end{minipage}
 \end{table}
+
+The first-difference specification provides an additional check on the levels model. Estimating the official three-variable system in log differences with the same prior and two lags yields a stable companion matrix (maximum modulus 0.586). Cumulative import responses remain small and slightly negative: $-0.06\%$ after one quarter, $-0.07\%$ after six quarters, and $-0.08\%$ after twelve quarters, with intervals that include zero. The cumulative GDP response is positive and larger than in the levels model ($0.49\%$ after one quarter and $0.22\%$ after twelve quarters), which shows that the output response is specification-sensitive. The import conclusion is unchanged: differencing does not restore the long-sample leakage.
 
 The FEVD tells the same story. In the official three-variable model, the fiscal shock explains 1.2\% of import variance at the one-quarter horizon, 6.2\% after six quarters, and 6.8\% after twelve quarters; for GDP, the shares are 27.5\%, 24.5\%, and 24.1\%. In the long three-variable model, the fiscal shock explains 7.3\% of import variance at one quarter, 34.5\% after six quarters, and 50.3\% after twelve quarters; for GDP, the shares are 0.6\%, 4.6\%, and 14.9\%. The long-sample fiscal shock is a dominant source of import fluctuations; the official fiscal shock is not. Figure~\ref{fig:fevd} presents the FEVDs.
 
 \section{Conclusion}
 \label{sec:conclusion}
 
-This paper revisited the evidence on fiscal leakage in Timor-Leste using official quarterly national accounts. The main conclusion is that the strong leakage result obtained from interpolated data is not robust. With official data for 2014Q1--2023Q4, a stable three-variable BVAR and local projections estimate a small, imprecise import response, below 0.4\% at all horizons, and no persistent output effect. The long 2002--2023 sample built by Denton--Cholette disaggregation produces a large and significant import response, peaking near 2\% in the BVAR and 24\% in local projections. The difference is due to how the data are constructed, not the estimator or the identification.
+This paper revisited the evidence on fiscal leakage in Timor-Leste using official quarterly national accounts. The main conclusion is that the strong leakage result obtained from long interpolated data is fragile. With official data for 2014Q1--2023Q4, a stable three-variable BVAR and local projections estimate a small, imprecise import response, between $-0.5\%$ and $0.8\%$ across horizons, and an output response that is not robust across specifications. The long 2002--2023 sample built by Denton--Cholette disaggregation produces a large and significant import response, peaking near 2.1\% in the BVAR and 26\% in local projections. The difference is not due to the estimator, the prior, or the identification.
 
-The methodological lesson is that temporal disaggregation can generate spurious fiscal transmission. Because the interpolated series share a common annual benchmark and a common smooth trend, they comove mechanically. A VAR estimated on these series can attribute that comovement to a fiscal shock, producing a large and apparently precise leakage effect. The official data, which contain independent quarterly variation, do not support that interpretation. The hybrid experiment, which uses a smooth government series with official outcomes, is consistent with the interpretation that the artifact requires the joint interpolation of the outcome series, not just a smooth fiscal measure.
+The methodological lesson is more specific than the earlier version of this paper suggested. Temporal disaggregation does smooth the series and removes high-frequency independent variation, but shared smoothness alone does not generate the leakage: in the common 2014--2023 window, even the cell with interpolated fiscal and outcome series produces a near-zero import response. The long-sample result is associated with the earlier observations, although the pre-2014 subsample alone is too unstable to identify the separate contribution of period-specific shocks and interpolation. The 2x2 design therefore shows that the earlier mechanism was too broad, while confirming that long interpolated samples can produce estimates that are not reproduced in a common official window.
 
-These findings have implications for policy analysis in data-limited economies. Estimates of fiscal multipliers and leakage based on interpolated quarterly data should be treated with caution, and they should be tested against official high-frequency data whenever available. For Timor-Leste, the official data do not provide evidence of a large import leakage, but they also do not provide a precise estimate of the fiscal multiplier. The small official-data responses are consistent with the existing estimates of 0.08--0.17 for the multiplier \parencite{worldbank2021,imf2024}. The short sample, the volatility of government expenditure, and the source differences between national-accounts and administrative data all limit precision. The appropriate conclusion is not that leakage is absent, but that the available official data do not support the large and persistent leakage estimated from interpolated series.
+These findings have implications for policy analysis in data-limited economies. Estimates of fiscal multipliers and leakage based on long interpolated samples should be treated with caution, and they should be tested against official high-frequency data and common-window designs whenever available. For Timor-Leste, the official data do not provide evidence of a large import leakage, but they also do not provide a precise estimate of the fiscal multiplier. The small official-data import responses are consistent with the existing estimates of 0.08--0.17 for the multiplier \parencite{worldbank2021,imf2024}. The short sample, the volatility of government expenditure, and the source differences between national-accounts and administrative data all limit precision. The appropriate conclusion is not that leakage is absent, but that the available official data do not support the large and persistent leakage estimated from the long interpolated sample.
 
-Further work should extend the official sample as new quarterly observations become available, explore alternative fiscal shocks based on budget execution data, and investigate whether the interpolation artifact is present in other small open economies.
+Further work should extend the official sample as new quarterly observations become available, explore alternative fiscal shocks based on budget execution data, and apply the common-window 2x2 design to other small open economies with both annual and official quarterly data.
 
 \section*{Data and code availability}
 \label{sec:repro}
 
-We welcome readers to use, replicate, review, and extend this work. All code, processed data, and generated results are available in the public repository \url{https://github.com/Emerson-nic/Timor-Leste-fiscal-bvar}. The \texttt{README} documents the project structure, data sources, script execution order, and document compilation with LuaLaTeX and Biber. The official data are built by \texttt{scripts/00\_build\_quarterly\_official.R}; the BVAR is estimated by \texttt{scripts/07\_irf\_fevd.R} with \texttt{SAMPLE=official\_3var} or \texttt{SAMPLE=long\_3var}; the local projections are estimated by \texttt{scripts/08\_local\_projections.R}; and the hybrid robustness check is in \texttt{scripts/09\_hybrid\_robustness.R}. The dashboard data are prepared by \texttt{scripts/build\_dashboard\_data.R}, and the interactive dashboard is available at \url{https://connect.posit.cloud/em3r/content/01a068c1-99da-638d-1ba0-1254293e5a61}.
+We welcome readers to use, replicate, review, and extend this work. All code, processed data, and generated results are available in the public repository \url{https://github.com/Emerson-nic/Timor-Leste-fiscal-bvar}. The \texttt{README} documents the project structure, data sources, script execution order, and document compilation with LuaLaTeX and Biber. The official data are built by \texttt{scripts/00\_build\_quarterly\_official.R}; the BVAR is estimated by \texttt{scripts/07\_irf\_fevd.R} with \texttt{SAMPLE=official\_3var} or \texttt{SAMPLE=long\_3var}; the local projections are estimated by \texttt{scripts/08\_local\_projections.R}; the 2x2 hybrid and period decomposition are in \texttt{scripts/09\_hybrid\_robustness.R}; and the first-difference BVAR is in \texttt{scripts/10\_first\_difference\_bvar.R}. The dashboard data are prepared by \texttt{scripts/build\_dashboard\_data.R}, and the interactive dashboard is available at \url{https://connect.posit.cloud/em3r/content/01a068c1-99da-638d-1ba0-1254293e5a61}.
 
 \printbibliography[title={References}]
 
